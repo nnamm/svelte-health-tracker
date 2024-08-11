@@ -9,3 +9,7 @@ This project implements a responsive Svelte frontend to interact with my Go and 
 ## Current Focus
 
 The initial phase concentrates on enabling users to log and fetch step count data through an intuitive Svelte interface.
+
+## Reference
+
+[nnamm/go-health-tracker](https://github.com/nnamm/go-health-tracker)
