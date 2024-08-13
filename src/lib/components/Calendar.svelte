@@ -10,4 +10,4 @@
   }
 </script>
 
-<Datepicker bind:selected on:select={handleSelect} />/
+<Datepicker bind:selected on:select={handleSelect} />

@@ -46,5 +46,5 @@
 </script>
 
 <h1>Health Record fo {date}</h1>
-<HealthRecord {healthRecord} {date} on:save={handleSave} on:delete={handleDelete} />
+<HealthRecordForm {healthRecord} {date} on:save={handleSave} on:delete={handleDelete} />
 <a href="/">Back to Calendar</a>
