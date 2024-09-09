@@ -1,49 +1,72 @@
 <script lang="ts">
-  import CalendarDay from './CalendarDay.svelte';
+	import {
+		generateCalendarMonth,
+		getDaysOfWeek,
+		type DayOfWeek
+	} from '$lib/components/calendar/calendarHelper';
 
-  export let year: number;
-  export let month: number;
-  export let startDayOfWeek: number = 0; // 0: Sunday, 1: Monday, etc.
+	export let year: number = new Date().getFullYear();
+	export let month: number = new Date().getMonth() + 1;
+	export let startDayOfWeek: DayOfWeek = 1;
 
-  const daysOfWeek = ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'];
-  $: sortedDayOfWeek = [...daysOfWeek.slice(startDayOfWeek), ...daysOfWeek.slice(0, startDayOfWeek)];
-
-  function generateCalendarDays(year: number, month: number): Date[] {
-    const firstDay = 1;
-    const lastDay = new Date(year, month, 0);
-    const days: Date[] = [];
-
-    for (let d = firstDay; d <= lastDay.getDate(); d++) {
-      days.push(new Date(year, month - 1));
-    }
-
-    return days;
-  }
-
-  $: calendarDays = generateCalendarDays(year, month);
-  $: today = new Date();
+	$: weeks = generateCalendarMonth(year, month, startDayOfWeek);
+	$: daysOfWeek = getDaysOfWeek(startDayOfWeek);
 </script>
 
-<div class="calendar-grid">
-  {#each sortedDayOfWeek as day}
-    <div class="day-header">{day}</div>
-  {/each}
-  {#each calendarDays as day}
-    <CalendarDay date={day} isCurrentMonth={true} isToday={day.toDateString() === today.toDateString()} />
-  {/each}
+<div class="yearmonth">{month} {year}</div>
+<div class="calendar">
+	<div class="days-of-week">
+		{#each daysOfWeek as day}
+			<div class="day-header">{day}</div>
+		{/each}
+	</div>
+	{#each weeks as week}
+		<div class="week">
+			{#each week as day}
+				<div class="day" class:current-month={day.isCurrentMonth} class:today={day.isToday}>
+					{day.date.getDate()}
+				</div>
+			{/each}
+		</div>
+	{/each}
 </div>
 
 <style>
-  .calendar-grid {
-    display: grid;
-    grid-template-columns: repeat(7, 1fr);
-    gap: 1px;
-    background-color: #e0e0e0;
-  }
-  .day-header {
-    padding: 0.5rem;
-    text-align: center;
-    font-weight: bold;
-    background-color: #f0f0f0;
-  }
+	.yearmonth {
+		text-align: center;
+		font-weight: bold;
+		padding: 0.75rem;
+		background-color: #fcfcfc;
+	}
+	.calendar {
+		display: grid;
+		grid-template-rows: auto repeat(6, 1fr);
+		gap: 1px;
+		background-color: #e0e0e0;
+	}
+	.days-of-week {
+		display: grid;
+		grid-template-columns: repeat(7, 1fr);
+	}
+	.day-header {
+		text-align: center;
+		font-weight: bold;
+		padding: 0.5rem;
+		background-color: #f0f0f0;
+	}
+	.week {
+		display: grid;
+		grid-template-columns: repeat(7, 1fr);
+	}
+	.day {
+		padding: 0.5rem;
+		text-align: center;
+	}
+	.current-month {
+		background-color: white;
+	}
+	.today {
+		font-weight: bold;
+		color: red;
+	}
 </style>
