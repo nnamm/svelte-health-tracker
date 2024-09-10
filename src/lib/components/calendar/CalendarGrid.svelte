@@ -1,8 +1,10 @@
 <script lang="ts">
 	import {
 		generateCalendarMonth,
+		getMonthName,
 		getDaysOfWeek,
-		type DayOfWeek
+		type DayOfWeek,
+		type MonthNumber
 	} from '$lib/components/calendar/calendarHelper';
 
 	export let year: number = new Date().getFullYear();
@@ -11,6 +13,7 @@
 
 	$: weeks = generateCalendarMonth(year, month, startDayOfWeek);
 	$: daysOfWeek = getDaysOfWeek(startDayOfWeek);
+	$: monthName = getMonthName(month as MonthNumber);
 
 	function changeMonth(delta: number) {
 		let newMonth = month + delta;
@@ -32,7 +35,7 @@
 <div class="calendar-container">
 	<div class="yearmonth">
 		<button on:click={() => changeMonth(-1)}>&lt;</button>
-		<span>{month} {year}</span>
+		<span>{monthName} {year}</span>
 		<button on:click={() => changeMonth(1)}>&gt;</button>
 	</div>
 	<div class="calendar">

@@ -1,4 +1,4 @@
-import { addDays, startOfWeek, startOfMonth, isSameMonth, isSameDay } from 'date-fns';
+import { addDays, startOfWeek, startOfMonth, isSameMonth, isSameDay, type Month } from 'date-fns';
 
 export interface CalendarDay {
 	date: Date;
@@ -8,6 +8,7 @@ export interface CalendarDay {
 
 export type Week = CalendarDay[];
 export type DayOfWeek = 0 | 1 | 2 | 3 | 4 | 5 | 6;
+export type MonthNumber = 0 | 1 | 2 | 3 | 4 | 5 | 6 | 7 | 8 | 9 | 10 | 11;
 
 function generateCalendarMonthImpl(
 	year: number,
@@ -48,6 +49,24 @@ export const generateCalendarMonth = (() => {
 		return cache.get(key)!;
 	};
 })();
+
+export function getMonthName(month: MonthNumber): string {
+	const monthNames = [
+		'January',
+		'February',
+		'March',
+		'April',
+		'May',
+		'June',
+		'July',
+		'August',
+		'September',
+		'October',
+		'November',
+		'December'
+	];
+	return monthNames[month - 1];
+}
 
 export function getDaysOfWeek(startDayOfWeek: DayOfWeek): string[] {
 	const dayOfWeek = ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'];
