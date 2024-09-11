@@ -34,20 +34,30 @@
 
 <div class="calendar-container">
 	<div class="yearmonth">
-		<button on:click={() => changeMonth(-1)}>&lt;</button>
-		<span>{monthName} {year}</span>
-		<button on:click={() => changeMonth(1)}>&gt;</button>
+		<button on:click={() => changeMonth(-1)} aria-label="Previous month">
+			<i class="left-arrow" />
+		</button>
+		<span id="current-month-year">{monthName} {year}</span>
+		<button on:click={() => changeMonth(1)} aria-label="Next month">
+			<i class="right-arrow" />
+		</button>
 	</div>
-	<div class="calendar">
-		<div class="days-of-week">
+	<div class="calendar" role="grid" aria-labelledby="current-month-year">
+		<div class="days-of-week" role="row">
 			{#each daysOfWeek as day}
-				<div class="day-header">{day}</div>
+				<div class="day-header" role="columnheader">{day}</div>
 			{/each}
 		</div>
 		{#each weeks as week}
-			<div class="week">
+			<div class="week" role="row">
 				{#each week as day}
-					<div class="day" class:current-month={day.isCurrentMonth} class:today={day.isToday}>
+					<div
+						class="day"
+						class:current-month={day.isCurrentMonth}
+						class:today={day.isToday}
+						role="gridcell"
+						aria-label={`${day.date.getDate()} ${getMonthName(day.date.getMonth() + 1)}, ${day.date.getFullYear()}`}
+					>
 						{day.date.getDate()}
 					</div>
 				{/each}
@@ -57,60 +67,118 @@
 </div>
 
 <style>
+	:root {
+		font-family: SUSE, sans-serif;
+
+		--calendar-bg1: #fcfcfc;
+		--calendar-bg2: #e0e0e0;
+		--calendar-not-current: #f8f8f8;
+		--hover: #ffcee3;
+		--font-base: #333;
+		--weight-base: 300;
+		--weight-bold: 500;
+	}
+
 	.calendar-container {
 		width: 100%;
-		max-width: 600px;
+		max-width: 500px;
 		margin: 0 auto;
+		font-weight: var(--weight-base);
+		color: var(--font-base);
 	}
+
 	.yearmonth {
 		display: flex;
-		justify-content: space-between;
 		align-items: center;
+		justify-content: space-between;
+		padding: 0.25rem 1rem;
+		font-weight: var(--weight-bold);
 		text-align: center;
-		font-weight: bold;
-		padding: 0.75rem;
-		background-color: #fcfcfc;
+		background-color: var(--calendar-bg1);
 	}
+
 	.yearmonth button {
+		padding: 0.5rem;
+		font-size: 2rem;
+		cursor: pointer;
 		background: none;
 		border: none;
-		font-size: 1.5rem;
-		cursor: pointer;
+		border-radius: 10%;
+		transition: background-color 0.3s ease;
 	}
+
+	.yearmonth button:hover {
+		background-color: var(--hover);
+	}
+
 	.calendar {
 		display: grid;
 		grid-template-rows: auto repeat(6, 1fr);
-		gap: 1px;
-		background-color: #f0f0f0;
+		row-gap: 1px;
+		background-color: var(--calendar-bg2);
+		border: 1px solid var(--calendar-bg2);
 	}
+
 	.days-of-week {
 		display: grid;
 		grid-template-columns: repeat(7, 1fr);
+		background-color: var(--calendar-bg1);
 	}
+
 	.day-header {
-		text-align: center;
-		font-weight: normal;
-		font-size: 0.8rem;
 		padding: 0.5rem;
-		background-color: #f0f0f0;
+		font-size: 0.8rem;
+		font-weight: var(--weight-base);
+		text-align: center;
 	}
+
 	.week {
 		display: grid;
 		grid-template-columns: repeat(7, 1fr);
+		column-gap: 1px;
 	}
+
 	.day {
-		padding: 0.5rem;
+		padding: 0.7rem;
+		font-weight: var(--weight-base);
 		text-align: center;
-	}
-	.day:not(.current-month) {
-		opacity: 0.6;
-		color: #999;
-	}
-	.current-month {
 		background-color: white;
+		transition: background-color 0.3s ease;
 	}
-	.today {
-		font-weight: bold;
-		color: red;
+
+	.day:not(.current-month) {
+		color: #ccc;
+		background-color: var(--calendar-not-current);
+	}
+
+	.day.today {
+		font-weight: var(--weight-bold);
+		color: #007bff;
+		background-color: #e6f2ff;
+	}
+
+	.day:hover {
+		cursor: pointer;
+		background-color: var(--hover);
+	}
+
+	i {
+		display: inline-block;
+		width: 20px;
+		height: 20px;
+		border-color: var(--font-base);
+		border-style: solid;
+		border-width: 0;
+		border-right-width: 1px;
+		border-bottom-width: 1px;
+		transform-origin: center center;
+	}
+
+	.left-arrow {
+		transform: translate(6px) rotate(135deg);
+	}
+
+	.right-arrow {
+		transform: translate(-6px) rotate(-45deg);
 	}
 </style>
