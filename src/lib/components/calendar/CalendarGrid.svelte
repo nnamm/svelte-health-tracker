@@ -8,8 +8,8 @@
 	} from '$lib/components/calendar/calendarHelper';
 
 	export let year: number = new Date().getFullYear();
-	export let month: number = new Date().getMonth() + 1;
-	export let startDayOfWeek: DayOfWeek = 1; // Monday start
+	export let month: number = new Date().getMonth() + 1; // Corrects the return value of getMonth() to the calendar month(1-12)
+	export let startDayOfWeek: DayOfWeek = 1; // Setting the start of Monday
 
 	$: weeks = generateCalendarMonth(year, month, startDayOfWeek);
 	$: daysOfWeek = getDaysOfWeek(startDayOfWeek);
