@@ -1,4 +1,4 @@
-import { addDays, startOfWeek, startOfMonth, isSameMonth, isSameDay, type Month } from 'date-fns';
+import { addDays, startOfWeek, startOfMonth, isSameMonth, isSameDay } from 'date-fns';
 
 export interface CalendarDay {
 	date: Date;
@@ -8,15 +8,15 @@ export interface CalendarDay {
 
 export type Week = CalendarDay[];
 export type DayOfWeek = 0 | 1 | 2 | 3 | 4 | 5 | 6;
-export type MonthNumber = 0 | 1 | 2 | 3 | 4 | 5 | 6 | 7 | 8 | 9 | 10 | 11;
+export type MonthNumber = 1 | 2 | 3 | 4 | 5 | 6 | 7 | 8 | 9 | 10 | 11 | 12; // Real calendar month
 
 function generateCalendarMonthImpl(
 	year: number,
-	month: number,
+	realMonth: number,
 	startDayOfWeek: DayOfWeek = 0
 ): Week[] {
 	const weeks: Week[] = [];
-	const firstDayOfMonth = startOfMonth(new Date(year, month - 1));
+	const firstDayOfMonth = startOfMonth(new Date(year, realMonth - 1));
 	const startDate = startOfWeek(firstDayOfMonth, { weekStartsOn: startDayOfWeek });
 	const today = new Date();
 
@@ -41,16 +41,16 @@ function generateCalendarMonthImpl(
 
 export const generateCalendarMonth = (() => {
 	const cache = new Map<string, Week[]>();
-	return (year: number, month: number, startDayOfWeek: DayOfWeek = 0): Week[] => {
-		const key = `${year}-${month}-${startDayOfWeek}`;
+	return (year: number, realMonth: number, startDayOfWeek: DayOfWeek = 0): Week[] => {
+		const key = `${year}-${realMonth}-${startDayOfWeek}`;
 		if (!cache.has(key)) {
-			cache.set(key, generateCalendarMonthImpl(year, month, startDayOfWeek));
+			cache.set(key, generateCalendarMonthImpl(year, realMonth, startDayOfWeek));
 		}
 		return cache.get(key)!;
 	};
 })();
 
-export function getMonthName(month: MonthNumber): string {
+export function getMonthName(realMonth: number): string {
 	const monthNames = [
 		'January',
 		'February',
@@ -65,7 +65,7 @@ export function getMonthName(month: MonthNumber): string {
 		'November',
 		'December'
 	];
-	return monthNames[month - 1];
+	return monthNames[(realMonth - 1) % 12];
 }
 
 export function getDaysOfWeek(startDayOfWeek: DayOfWeek): string[] {
