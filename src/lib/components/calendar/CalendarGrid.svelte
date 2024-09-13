@@ -15,9 +15,15 @@
 	$: daysOfWeek = getDaysOfWeek(startDayOfWeek);
 	$: monthName = getMonthName(month as MonthNumber);
 
-	function changeMonth(delta: number) {
-		let newMonth = month + delta;
-		let newYear = year;
+	let isYearMonthSelectorOpen: boolean = false;
+
+	function toggleYearMonthSelector() {
+		isYearMonthSelectorOpen = !isYearMonthSelectorOpen;
+	}
+
+	function changeYearMonth(yearDelta: number, monthDelta: number) {
+		let newMonth = month + monthDelta;
+		let newYear = year + yearDelta;
 
 		if (newMonth > 12) {
 			newMonth = 1;
@@ -33,14 +39,29 @@
 </script>
 
 <div class="calendar-container">
-	<div class="yearmonth">
-		<button on:click={() => changeMonth(-1)} aria-label="Previous month">
-			<i class="left-arrow" />
-		</button>
-		<span id="current-month-year">{monthName} {year}</span>
-		<button on:click={() => changeMonth(1)} aria-label="Next month">
-			<i class="right-arrow" />
-		</button>
+	<div class="year-month-selector" role="group" aria-label="Year and month selection">
+		{#if !isYearMonthSelectorOpen}
+			<button on:click={() => changeYearMonth(0, -1)} aria-label="Previous month">
+				<i class="left-arrow" />
+			</button>
+			<button on:click={() => toggleYearMonthSelector()} aria-expanded={isYearMonthSelectorOpen}>
+				{monthName}
+				{year}
+			</button>
+			<button on:click={() => changeYearMonth(0, 1)} aria-label="Next month">
+				<i class="right-arrow" />
+			</button>
+		{:else}
+			<button on:click={() => changeYearMonth(-1, 0)} aria-label="Previous year">
+				<i class="left-arrow" />
+			</button>
+			<button on:click={() => toggleYearMonthSelector()} aria-expanded={isYearMonthSelectorOpen}>
+				{year}
+			</button>
+			<button on:click={() => changeYearMonth(1, 0)} aria-label="Next year">
+				<i class="right-arrow" />
+			</button>
+		{/if}
 	</div>
 	<div class="calendar" role="grid" aria-labelledby="current-month-year">
 		<div class="days-of-week" role="row">
@@ -68,8 +89,6 @@
 
 <style>
 	:root {
-		font-family: SUSE, sans-serif;
-
 		--calendar-bg1: #fcfcfc;
 		--calendar-bg2: #e0e0e0;
 		--calendar-not-current: #f8f8f8;
@@ -81,33 +100,34 @@
 
 	.calendar-container {
 		width: 100%;
-		max-width: 500px;
+		max-width: 480px;
 		margin: 0 auto;
+		font-family: SUSE, sans-serif;
+		font-size: 1rem;
 		font-weight: var(--weight-base);
 		color: var(--font-base);
 	}
 
-	.yearmonth {
-		display: flex;
+	.year-month-selector {
+		display: grid;
+		grid-template-columns: auto 1fr auto;
 		align-items: center;
-		justify-content: space-between;
-		padding: 0.25rem 1rem;
-		font-weight: var(--weight-bold);
-		text-align: center;
 		background-color: var(--calendar-bg1);
 	}
 
-	.yearmonth button {
-		padding: 0.5rem;
-		font-size: 2rem;
+	.year-month-selector button {
+		padding: 0.75em;
+		font-family: SUSE, sans-serif;
+		font-size: 1.1em;
+		font-weight: var(--weight-bold);
+		color: var(--font-base);
 		cursor: pointer;
 		background: none;
 		border: none;
-		border-radius: 10%;
 		transition: background-color 0.3s ease;
 	}
 
-	.yearmonth button:hover {
+	.year-month-selector button:hover {
 		background-color: var(--hover);
 	}
 
@@ -126,9 +146,8 @@
 	}
 
 	.day-header {
-		padding: 0.5rem;
-		font-size: 0.8rem;
-		font-weight: var(--weight-base);
+		padding: 0.5em;
+		font-size: 0.8em;
 		text-align: center;
 	}
 
@@ -139,8 +158,7 @@
 	}
 
 	.day {
-		padding: 0.7rem;
-		font-weight: var(--weight-base);
+		padding: 0.7em;
 		text-align: center;
 		background-color: white;
 		transition: background-color 0.3s ease;
@@ -164,8 +182,8 @@
 
 	i {
 		display: inline-block;
-		width: 20px;
-		height: 20px;
+		width: 0.75em;
+		height: 0.75em;
 		border-color: var(--font-base);
 		border-style: solid;
 		border-width: 0;
