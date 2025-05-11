@@ -1,16 +1,30 @@
-<script lang="ts">
-	import Calendar from '$lib/components/calendar/CalendarGrid.svelte';
-</script>
-
-<nav>
-	<a href="/">Home</a>
-</nav>
+<!-- <nav> -->
+<!-- 	<a href="/">Home</a> -->
+<!-- </nav> -->
 
 <main>
 	<slot />
-	<Calendar />
 </main>
 
-<footer>
-	<p>@ 2024 Health Tracker</p>
-</footer>
+<!-- <footer> -->
+<!-- 	<p>@ 2025 Health Tracker</p> -->
+<!-- </footer> -->
+
+<style>
+	main {
+		width: 100%;
+		max-width: 1200px;
+		margin: 0 auto;
+		padding: 0 1rem;
+	}
+
+	/* footer { */
+	/* 	text-align: center; */
+	/* 	padding: 1.5rem 0; */
+	/* 	margin-top: 2rem; */
+	/* } */
+
+	/* footer p { */
+	/* 	margin: 0; */
+	/* } */
+</style>
