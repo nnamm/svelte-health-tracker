@@ -1,18 +1,33 @@
 <script lang="ts">
 	import Calendar from '$lib/components/calendar/CalendarGrid.svelte';
+	import HealthDataModal from '$lib/components/health/HealthDataModal.svelte';
 	import { api } from '$lib/api';
 	import type { HealthRecord } from '$lib/types/HealthRecord';
-	import { goto } from '$app/navigation';
 	import type { DailyHealthRecord } from '$lib/components/calendar/calendarHelper';
 
-	// Svelte store for managing state
+	// Manage state
 	let currentYear = $state(new Date().getFullYear());
 	let currentMonth = $state(new Date().getMonth() + 1);
 	let healthData = $state<DailyHealthRecord[]>([]);
 
+	// Modal state
+	let isModalOpen = $state(false);
+	let selectedDate = $state('');
+
 	// Handler for selecting a date
 	function handleDateSelect(event: { date: string }) {
-		goto(`health/${event.date}`);
+		selectedDate = event.date;
+		isModalOpen = true;
+	}
+
+	// Haddler for data updated
+	function handleDataUpdated(record: HealthRecord | null) {
+		loadHealthData();
+	}
+
+	// Close modal
+	function closeModal() {
+		isModalOpen = false;
 	}
 
 	// Load health data for the current month
@@ -35,10 +50,12 @@
 		}
 	}
 
+	// Initiale load
 	$effect(() => {
 		loadHealthData();
 	});
 
+	// Load health data when year or month changes
 	$effect(() => {
 		if (currentYear && currentMonth) {
 			loadHealthData();
@@ -49,6 +66,17 @@
 <h1 class="page-title">Health Tracker</h1>
 
 <Calendar year={currentYear} month={currentMonth} {healthData} dateSelect={handleDateSelect} />
+
+<HealthDataModal
+	isOpen={isModalOpen}
+	date={selectedDate}
+	dailyHealthRecord={healthData.find((record) => record.date === selectedDate) || {
+		date: selectedDate,
+		hasHealthData: false
+	}}
+	onClose={closeModal}
+	onDataUpdated={handleDataUpdated}
+/>
 
 <style>
 	.page-title {

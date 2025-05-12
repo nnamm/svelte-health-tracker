@@ -1,16 +1,28 @@
 <script lang="ts">
-	import { page } from '$app/stores';
+	import Modal from '$lib/components/modal/Modal.svelte';
 	import { api } from '$lib/api';
-	import { goto } from '$app/navigation';
 	import type { HealthRecord } from '$lib/types/HealthRecord';
 	import type { DailyHealthRecord } from '$lib/components/calendar/calendarHelper';
 
+	let {
+		isOpen = false,
+		date = '',
+		dailyHealthRecord = { date: '', hasHealthData: false },
+		onClose,
+		onDataUpdated
+	} = $props<{
+		isOpen: boolean;
+		date: string;
+		dailyHealthRecord: DailyHealthRecord | null;
+		onClose?: () => void;
+		onDataUpdated?: (record: HealthRecord | null) => void;
+	}>();
+
 	// Reactive variables
-	let healthRecord = $state<Partial<HealthRecord> | null>(null);
+	let healthRecord = $state<Partial<HealthRecord>>({ step_count: 0 });
 	let isLoading = $state(true);
 	let error = $state<string | null>(null);
 	let formattedDate = $state('');
-	let healthData = $state<DailyHealthRecord[]>([]);
 
 	// Function to format date for display (2025-05-01) -> May 1, 2025
 	function formatDisplayDate(dateString: string): string {
@@ -24,23 +36,23 @@
 
 	// Load health data for the selected date
 	async function loadHealthData(): Promise<void> {
+		if (!date) return;
+
 		isLoading = true;
 		error = null;
+		formattedDate = formatDisplayDate(date);
 
 		try {
-			if (healthData) {
-				const dateParam = $page.params.date;
-				formattedDate = formatDisplayDate(dateParam);
-
-				const response = await api.getHealthRecordByDate(dateParam);
+			if (dailyHealthRecord.hasHealthData === false) {
+				healthRecord = { date: date, step_count: 0 };
+			} else {
+				const response = await api.getHealthRecordByDate(date);
 
 				if (response.success) {
-					healthRecord = response.data || { date: dateParam, step_count: 0 };
-				} else if (response.data == null) {
-					healthRecord = { date: dateParam, step_count: 0 };
+					healthRecord = response.data || { date: date, step_count: 0 };
 				} else {
 					error = response.error || 'Failed to load health data';
-					healthRecord = null;
+					healthRecord = { date: date, step_count: 0 };
 				}
 			}
 		} catch (err) {
@@ -61,14 +73,15 @@
 		error = null;
 
 		try {
-			// determine if we're creating a new record or updating an existing one
 			const isNew = !healthRecord.id;
 			const response = isNew
 				? await api.createHealthRecord(healthRecord)
 				: await api.updateHealthRecord(healthRecord);
 
 			if (response.success) {
-				healthRecord = response.data;
+				healthRecord = response.data ?? {};
+				onDataUpdated?.(response.data);
+				closeModal();
 			} else {
 				error = response.error || 'Failed to save health data';
 			}
@@ -91,7 +104,8 @@
 			const response = await api.deleteHealthRecord(healthRecord.date);
 
 			if (response.success) {
-				goto('/');
+				onDataUpdated?.(null);
+				closeModal();
 			} else {
 				error = response.error || 'Failed to delete health data';
 			}
@@ -103,74 +117,75 @@
 		}
 	}
 
+	function closeModal(): void {
+		onClose?.();
+	}
+
 	$effect(() => {
-		loadHealthData();
+		if (isOpen && date) {
+			loadHealthData();
+		}
 	});
 </script>
 
-<div class="health-detail-container">
-	{#if isLoading}
-		<div class="loading">Loading health data...</div>
-	{:else}
-		<header>
-			<h1>Health Data for {formattedDate}</h1>
-			<button class="back-button" onclick={() => goto('/')}>Back to Calendar</button>
-		</header>
+<Modal {isOpen} close={closeModal}>
+	<div class="health-data-modal">
+		{#if isLoading}
+			<div class="loading">Loading...</div>
+		{:else}
+			<header>
+				<h2>Health Data: {formattedDate}</h2>
+			</header>
 
-		{#if error}
-			<div class="error-message">{error}</div>
+			{#if error}
+				<div class="error-message">{error}</div>
+			{/if}
+
+			<form onsubmit={saveHealthData} class="health-form">
+				<div class="form-group">
+					<label for="step-count">Step count</label>
+					<input
+						id="step-count"
+						type="number"
+						min="0"
+						max="100000"
+						bind:value={healthRecord.step_count}
+						required
+					/>
+				</div>
+
+				<div class="button-group">
+					<button type="submit" class="primary-button">
+						{healthRecord?.id ? 'Update' : 'Save'}
+					</button>
+
+					{#if healthRecord?.id}
+						<button type="button" class="delete-button" onclick={deleteHealthData}> Delete </button>
+					{/if}
+
+					<button type="button" class="cancel-button" onclick={closeModal}> Cancel </button>
+				</div>
+			</form>
 		{/if}
-
-		<!-- <form onsubmit|preventDefault={saveHealthData} class="health-form"> -->
-		<form onsubmit={saveHealthData} class="health-form">
-			<div class="form-group">
-				<label for="step-count">Step Count</label>
-				<input
-					id="step-count"
-					type="number"
-					min="0"
-					max="100000"
-					bind:value={healthRecord!.step_count}
-				/>
-			</div>
-
-			<div class="button-group">
-				<button type="submit" class="primary-button">
-					{healthRecord?.id ? 'Update' : 'Save'}
-				</button>
-
-				{#if healthRecord?.id}
-					<button type="button" class="delete-button" onclick={deleteHealthData}>Delete</button>
-				{/if}
-			</div>
-		</form>
-	{/if}
-</div>
+	</div>
+</Modal>
 
 <style>
-	.health-detail-container {
-		max-width: 500px;
-		margin: 0 auto;
-		padding: 2rem 1rem;
+	.health-data-modal {
+		width: 100%;
 	}
 
 	header {
-		display: flex;
-		justify-content: space-between;
-		align-items: center;
-		margin-bottom: 2rem;
+		margin-bottom: 1.5rem;
 	}
 
-	h1 {
+	h2 {
 		font-size: 1.5rem;
 		margin: 0;
 	}
 
 	.health-form {
-		background: white;
-		padding: 1.5rem;
-		border-radius: 8px;
-		box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+		width: 100%;
 	}
 
 	.form-group {
@@ -193,11 +208,12 @@
 
 	.button-group {
 		display: flex;
-		gap: 1rem;
+		gap: 0.75rem;
+		justify-content: flex-end;
 	}
 
 	button {
-		padding: 0.75rem 1.5rem;
+		padding: 0.75rem 1.25rem;
 		border: none;
 		border-radius: 4px;
 		font-size: 1rem;
@@ -223,10 +239,13 @@
 		background: #c82333;
 	}
 
-	.back-button {
+	.cancel-button {
 		background: #6c757d;
 		color: white;
-		font-size: 0.875rem;
+	}
+
+	.cancel-button:hover {
+		background: #5a6268;
 	}
 
 	.error-message {
