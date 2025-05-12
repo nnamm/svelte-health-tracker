@@ -11,6 +11,8 @@
 		children?: Snippet;
 	}>();
 
+	let modalContent = $state<HTMLElement | null>(null);
+
 	function closeModal() {
 		close?.();
 	}
@@ -19,6 +21,8 @@
 	function handleKeydown(event: KeyboardEvent) {
 		if (event.key === 'Escape' && isOpen) {
 			closeModal();
+			event.preventDefault();
+			event.stopPropagation();
 		}
 	}
 
@@ -28,6 +32,12 @@
 			document.body.style.overflow = 'hidden';
 			// Add event listener for keydown
 			window.addEventListener('keydown', handleKeydown);
+			// Focus on the modal content
+			if (modalContent) {
+				setTimeout(() => {
+					modalContent?.focus();
+				}, 50);
+			}
 		} else {
 			// Allow scrolling when modal is closed
 			document.body.style.overflow = '';
@@ -47,8 +57,9 @@
 	<div class="modal-overlay" onclick={closeModal} onkeydown={handleKeydown} role="presentation">
 		<div
 			class="modal-content"
+			bind:this={modalContent}
 			onclick={(e) => e.stopPropagation()}
-			onkeydown={(e) => e.stopPropagation()}
+			onkeydown={() => {}}
 			role="dialog"
 			aria-modal="true"
 			tabindex="-1"
