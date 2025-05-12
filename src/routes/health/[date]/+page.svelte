@@ -6,7 +6,7 @@
 	import type { DailyHealthRecord } from '$lib/components/calendar/calendarHelper';
 
 	// Reactive variables
-	let healthRecord = $state<Partial<HealthRecord> | null>(null);
+	let healthRecord = $state<Partial<HealthRecord>>({ step_count: 0 });
 	let isLoading = $state(true);
 	let error = $state<string | null>(null);
 	let formattedDate = $state('');
@@ -40,7 +40,7 @@
 					healthRecord = { date: dateParam, step_count: 0 };
 				} else {
 					error = response.error || 'Failed to load health data';
-					healthRecord = null;
+					healthRecord = { date: dateParam, step_count: 0 };
 				}
 			}
 		} catch (err) {
@@ -68,7 +68,7 @@
 				: await api.updateHealthRecord(healthRecord);
 
 			if (response.success) {
-				healthRecord = response.data;
+				healthRecord = response.data ?? {};
 			} else {
 				error = response.error || 'Failed to save health data';
 			}
@@ -130,7 +130,7 @@
 					type="number"
 					min="0"
 					max="100000"
-					bind:value={healthRecord!.step_count}
+					bind:value={healthRecord.step_count}
 				/>
 			</div>
 
