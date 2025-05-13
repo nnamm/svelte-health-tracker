@@ -15,7 +15,8 @@
 		startDayOfWeek = 1, // Setting the start of Monday
 		healthData = [],
 		dateSelect,
-		yearMonthChange
+		yearMonthChange,
+		resetSelector
 	} = $props<{
 		year?: number;
 		month?: number;
@@ -23,9 +24,17 @@
 		healthData?: DailyHealthRecord[];
 		dateSelect?: (event: { date: string }) => void;
 		yearMonthChange?: (event: { year: number; month: number }) => void;
+		resetSelector?: boolean;
 	}>();
 
 	let isYearMonthSelectorOpen = $state(false);
+
+	// Back to initial state when resetSelector is true
+	$effect(() => {
+		if (resetSelector) {
+			isYearMonthSelectorOpen = false;
+		}
+	});
 
 	const weeks = $derived(generateCalendarMonth(year, month, startDayOfWeek));
 	const daysOfWeek = getDaysOfWeek(startDayOfWeek);
