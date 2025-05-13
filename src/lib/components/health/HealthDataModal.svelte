@@ -43,9 +43,11 @@
 		formattedDate = formatDisplayDate(date);
 
 		try {
-			if (dailyHealthRecord.hasHealthData === false) {
+			if (dailyHealthRecord?.hasHealthData === false) {
+				// No existing health data, set empty data
 				healthRecord = { date: date, step_count: 0 };
 			} else {
+				// Existing health data, fetch it
 				const response = await api.getHealthRecordByDate(date);
 
 				if (response.success) {

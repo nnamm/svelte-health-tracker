@@ -13,16 +13,22 @@
 	// Modal state
 	let isModalOpen = $state(false);
 	let selectedDate = $state('');
+	let selectedDailyHealthRecord = $state<DailyHealthRecord | null>(null);
 
 	// Handler for selecting a date
 	function handleDateSelect(event: { date: string }) {
 		selectedDate = event.date;
+		selectedDailyHealthRecord = healthData.find((record) => record.date == event.date) || {
+			date: event.date,
+			hasHealthData: false
+		};
 		isModalOpen = true;
 	}
 
-	// Haddler for data updated
-	function handleDataUpdated(record: HealthRecord | null) {
-		loadHealthData();
+	// Handler for changing year and month
+	function handleYearMonthChange(event: { year: number; month: number }) {
+		currentYear = event.year;
+		currentMonth = event.month;
 	}
 
 	// Close modal
@@ -30,8 +36,14 @@
 		isModalOpen = false;
 	}
 
+	// Haddler for data updated
+	function handleDataUpdated(record: HealthRecord | null) {
+		loadHealthData();
+	}
+
 	// Load health data for the current month
 	async function loadHealthData() {
+		console.log(`Loading health data for ${currentYear}-${currentMonth}`);
 		try {
 			const response = await api.getHealthRecordsByYearMonth(currentYear, currentMonth);
 
@@ -65,15 +77,18 @@
 
 <h1 class="page-title">Health Tracker</h1>
 
-<Calendar year={currentYear} month={currentMonth} {healthData} dateSelect={handleDateSelect} />
+<Calendar
+	year={currentYear}
+	month={currentMonth}
+	{healthData}
+	dateSelect={handleDateSelect}
+	yearMonthChange={handleYearMonthChange}
+/>
 
 <HealthDataModal
 	isOpen={isModalOpen}
 	date={selectedDate}
-	dailyHealthRecord={healthData.find((record) => record.date === selectedDate) || {
-		date: selectedDate,
-		hasHealthData: false
-	}}
+	dailyHealthRecord={selectedDailyHealthRecord}
 	onClose={closeModal}
 	onDataUpdated={handleDataUpdated}
 />
