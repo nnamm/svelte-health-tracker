@@ -9,6 +9,8 @@
 	let currentYear = $state(new Date().getFullYear());
 	let currentMonth = $state(new Date().getMonth() + 1);
 	let healthData = $state<DailyHealthRecord[]>([]);
+	let selectedDailyHealthRecord = $state<DailyHealthRecord | null>(null);
+	let isFlashing = $state(false);
 
 	// Modal state
 	let isModalOpen = $state(false);
@@ -17,17 +19,27 @@
 	// Handler for selecting a date
 	function handleDateSelect(event: { date: string }) {
 		selectedDate = event.date;
+		selectedDailyHealthRecord = healthData.find((record) => record.date == event.date) || {
+			date: event.date,
+			hasHealthData: false
+		};
 		isModalOpen = true;
 	}
 
-	// Haddler for data updated
-	function handleDataUpdated(record: HealthRecord | null) {
-		loadHealthData();
+	// Handler for changing year and month
+	function handleYearMonthChange(event: { year: number; month: number }) {
+		currentYear = event.year;
+		currentMonth = event.month;
 	}
 
 	// Close modal
 	function closeModal() {
 		isModalOpen = false;
+	}
+
+	// Haddler for data updated
+	function handleDataUpdated() {
+		loadHealthData();
 	}
 
 	// Load health data for the current month
@@ -50,10 +62,16 @@
 		}
 	}
 
-	// Initiale load
-	$effect(() => {
-		loadHealthData();
-	});
+	function resetToCurrentDate() {
+		const today = new Date();
+		currentYear = today.getFullYear();
+		currentMonth = today.getMonth() + 1;
+
+		isFlashing = true;
+		setTimeout(() => {
+			isFlashing = false;
+		}, 300);
+	}
 
 	// Load health data when year or month changes
 	$effect(() => {
@@ -63,24 +81,73 @@
 	});
 </script>
 
-<h1 class="page-title">Health Tracker</h1>
+<button class="page-title-button" onclick={resetToCurrentDate}>
+	<span class="page-title" class:title-flash={isFlashing}>Health Tracker</span>
+</button>
 
-<Calendar year={currentYear} month={currentMonth} {healthData} dateSelect={handleDateSelect} />
+<Calendar
+	year={currentYear}
+	month={currentMonth}
+	{healthData}
+	dateSelect={handleDateSelect}
+	yearMonthChange={handleYearMonthChange}
+	resetSelector={isFlashing}
+/>
 
 <HealthDataModal
 	isOpen={isModalOpen}
 	date={selectedDate}
-	dailyHealthRecord={healthData.find((record) => record.date === selectedDate) || {
-		date: selectedDate,
-		hasHealthData: false
-	}}
+	dailyHealthRecord={selectedDailyHealthRecord}
 	onClose={closeModal}
 	onDataUpdated={handleDataUpdated}
 />
 
 <style>
+	.page-title-button {
+		display: block;
+		width: fit-content;
+		margin: 1.5rem auto;
+		padding: 0.5rem 1rem;
+		cursor: pointer;
+		transition:
+			color 0.2s ease,
+			background-color 0.2s ease;
+		user-select: none;
+		border-radius: 4px;
+		background: none;
+		border: none;
+		font-size: inherit;
+		font-weight: bold;
+		font-family: inherit;
+		color: inherit;
+	}
+
+	.page-title-button:hover {
+		color: #007bff;
+		background-color: rgba(0, 123, 255, 0.05);
+	}
+
 	.page-title {
-		text-align: center;
-		margin: 1.5rem 0 2rem 0;
+		font-size: 2rem;
+		font-weight: bold;
+	}
+
+	.title-flash {
+		animation: flash 0.3s;
+	}
+
+	@keyframes flash {
+		0% {
+			color: inherit;
+			background-color: rgba(0, 123, 255, 0);
+		}
+		50% {
+			color: #007bff;
+			background-color: rgba(0, 123, 255, 0.1);
+		}
+		100% {
+			color: inherit;
+			background-color: rgba(0, 123, 255, 0);
+		}
 	}
 </style>
