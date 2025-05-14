@@ -2,11 +2,13 @@
 	import {
 		generateCalendarMonth,
 		getMonthName,
-		getDaysOfWeek,
+		getDaysOfWeek
+	} from '$lib/features/calendar/helpers/calendarHelper';
+	import {
 		type DayOfWeek,
 		type MonthNumber,
 		type DailyHealthRecord
-	} from '$lib/components/calendar/calendarHelper';
+	} from '$lib/features/calendar/types/index';
 	import { formatISO } from 'date-fns';
 
 	let {

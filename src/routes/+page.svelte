@@ -1,9 +1,9 @@
 <script lang="ts">
-	import Calendar from '$lib/components/calendar/CalendarGrid.svelte';
-	import HealthDataModal from '$lib/components/health/HealthDataModal.svelte';
-	import { api } from '$lib/api';
+	import Calendar from '$lib/features/calendar/components/CalendarGrid.svelte';
+	import HealthDataModal from '$lib/features/health/components/HealthDataModal.svelte';
+	import { getHealthRecordsByYearMonth } from '$lib/features/health/services/healthDataService';
 	import type { HealthRecord } from '$lib/types/HealthRecord';
-	import type { DailyHealthRecord } from '$lib/components/calendar/calendarHelper';
+	import type { DailyHealthRecord } from '$lib/features/calendar/types';
 
 	// Manage state
 	let currentYear = $state(new Date().getFullYear());
@@ -45,7 +45,7 @@
 	// Load health data for the current month
 	async function loadHealthData() {
 		try {
-			const response = await api.getHealthRecordsByYearMonth(currentYear, currentMonth);
+			const response = await getHealthRecordsByYearMonth(currentYear, currentMonth);
 
 			if (response.success && response.data) {
 				healthData = response.data.map((record: HealthRecord) => ({

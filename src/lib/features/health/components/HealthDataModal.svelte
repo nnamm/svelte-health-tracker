@@ -1,8 +1,13 @@
 <script lang="ts">
-	import Modal from '$lib/components/modal/Modal.svelte';
-	import { api } from '$lib/api';
+	import Modal from '$lib/common/components/Modal.svelte';
+	import {
+		createHealthRecord,
+		getHealthRecordByDate,
+		updateHealthRecord,
+		deleteHealthRecord
+	} from '$lib/features/health/services/healthDataService';
 	import type { HealthRecord } from '$lib/types/HealthRecord';
-	import type { DailyHealthRecord } from '$lib/components/calendar/calendarHelper';
+	import type { DailyHealthRecord } from '$lib/features/calendar/types';
 
 	let {
 		isOpen = false,
@@ -48,7 +53,7 @@
 				healthRecord = { date: date, step_count: 0 };
 			} else {
 				// Existing health data, fetch it
-				const response = await api.getHealthRecordByDate(date);
+				const response = await getHealthRecordByDate(date);
 
 				if (response.success) {
 					healthRecord = response.data || { date: date, step_count: 0 };
@@ -77,8 +82,8 @@
 		try {
 			const isNew = !healthRecord.id;
 			const response = isNew
-				? await api.createHealthRecord(healthRecord)
-				: await api.updateHealthRecord(healthRecord);
+				? await createHealthRecord(healthRecord)
+				: await updateHealthRecord(healthRecord);
 
 			if (response.success) {
 				healthRecord = response.data ?? {};
@@ -103,7 +108,7 @@
 		error = null;
 
 		try {
-			const response = await api.deleteHealthRecord(healthRecord.date);
+			const response = await deleteHealthRecord(healthRecord.date);
 
 			if (response.success) {
 				onDataUpdated?.(null);
