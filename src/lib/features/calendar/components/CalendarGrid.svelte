@@ -16,16 +16,16 @@
 		month = new Date().getMonth() + 1, // Corrects the return value of getMonth() to the calendar month(1-12)
 		startDayOfWeek = 1, // Setting the start of Monday
 		healthData = [],
-		dateSelect,
-		yearMonthChange,
-		resetSelector
+		onDateSelect,
+		onYearMonthChange,
+		resetSelector = false
 	} = $props<{
 		year?: number;
 		month?: number;
 		startDayOfWeek?: DayOfWeek;
 		healthData?: DailyHealthRecord[];
-		dateSelect?: (event: { date: string }) => void;
-		yearMonthChange?: (event: { year: number; month: number }) => void;
+		onDateSelect?: (event: { date: string }) => void;
+		onYearMonthChange?: (event: { year: number; month: number }) => void;
 		resetSelector?: boolean;
 	}>();
 
@@ -43,12 +43,12 @@
 	const monthName = $derived(getMonthName(month as MonthNumber));
 
 	// Check if a date has health data
-	function toggleYearMonthSelector() {
+	function toggleYearMonthSelector(): void {
 		isYearMonthSelectorOpen = !isYearMonthSelectorOpen;
 	}
 
 	// Handle year-month click event
-	function changeYearMonth(yearDelta: number, monthDelta: number) {
+	function changeYearMonth(yearDelta: number, monthDelta: number): void {
 		let newMonth = month + monthDelta;
 		let newYear = year + yearDelta;
 
@@ -64,8 +64,8 @@
 		year = newYear;
 
 		// Notify parent component
-		if (yearMonthChange) {
-			yearMonthChange({ year: newYear, month: newMonth });
+		if (onYearMonthChange) {
+			onYearMonthChange({ year: newYear, month: newMonth });
 		}
 	}
 
@@ -76,9 +76,9 @@
 	}
 
 	// Handle day click event
-	function handleDayClick(date: Date) {
+	function handleDayClick(date: Date): void {
 		const formattedISO = formatISO(date, { representation: 'date' });
-		dateSelect?.({ date: formattedISO });
+		onDateSelect?.({ date: formattedISO });
 	}
 </script>
 

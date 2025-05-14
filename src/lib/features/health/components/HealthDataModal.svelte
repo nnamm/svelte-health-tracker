@@ -12,7 +12,8 @@
 	let {
 		isOpen = false,
 		date = '',
-		dailyHealthRecord = { date: '', hasHealthData: false },
+		// dailyHealthRecord = { date: '', hasHealthData: false },
+		dailyHealthRecord = null,
 		onClose,
 		onDataUpdated
 	} = $props<{
@@ -22,6 +23,9 @@
 		onClose?: () => void;
 		onDataUpdated?: (record: HealthRecord | null) => void;
 	}>();
+
+	// Set safe default values
+	const safeHealthRecord = $derived(dailyHealthRecord || { date: date, hasHealthData: false });
 
 	// Reactive variables
 	let healthRecord = $state<Partial<HealthRecord>>({ step_count: 0 });
@@ -48,7 +52,7 @@
 		formattedDate = formatDisplayDate(date);
 
 		try {
-			if (dailyHealthRecord?.hasHealthData === false) {
+			if (!safeHealthRecord.hasHealthData) {
 				// No existing health data, set empty data
 				healthRecord = { date: date, step_count: 0 };
 			} else {
@@ -131,11 +135,14 @@
 	$effect(() => {
 		if (isOpen && date) {
 			loadHealthData();
+		} else {
+			error = null;
+			isLoading = false;
 		}
 	});
 </script>
 
-<Modal {isOpen} close={closeModal}>
+<Modal {isOpen} onClose={closeModal}>
 	<div class="health-data-modal">
 		{#if isLoading}
 			<div class="loading">Loading...</div>

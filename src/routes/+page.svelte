@@ -89,8 +89,8 @@
 	year={currentYear}
 	month={currentMonth}
 	{healthData}
-	dateSelect={handleDateSelect}
-	yearMonthChange={handleYearMonthChange}
+	onDateSelect={handleDateSelect}
+	onYearMonthChange={handleYearMonthChange}
 	resetSelector={isFlashing}
 />
 

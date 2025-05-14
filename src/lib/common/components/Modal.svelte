@@ -3,24 +3,24 @@
 
 	let {
 		isOpen = false,
-		close,
-		children
+		onClose,
+		children = undefined
 	} = $props<{
 		isOpen: boolean;
-		close?: () => void;
+		onClose?: () => void;
 		children?: Snippet;
 	}>();
 
 	let modalContent = $state<HTMLElement | null>(null);
 
-	function closeModal() {
-		close?.();
+	function handleClose(): void {
+		onClose?.();
 	}
 
 	// Close modal by ESC key
-	function handleKeydown(event: KeyboardEvent) {
+	function handleKeydown(event: KeyboardEvent): void {
 		if (event.key === 'Escape' && isOpen) {
-			closeModal();
+			handleClose();
 			event.preventDefault();
 			event.stopPropagation();
 		}
@@ -54,7 +54,7 @@
 </script>
 
 {#if isOpen}
-	<div class="modal-overlay" onclick={closeModal} onkeydown={handleKeydown} role="presentation">
+	<div class="modal-overlay" onclick={handleClose} onkeydown={handleKeydown} role="presentation">
 		<div
 			class="modal-content"
 			bind:this={modalContent}
@@ -64,7 +64,7 @@
 			aria-modal="true"
 			tabindex="-1"
 		>
-			<button type="button" class="close-button" onclick={closeModal} aria-label="Close modal">
+			<button type="button" class="close-button" onclick={handleClose} aria-label="Close modal">
 				&times;
 			</button>
 			{@render children?.()}
