@@ -1,4 +1,23 @@
 <script lang="ts">
+	/**
+	 * Calendar Grid Component
+	 * 
+	 * @component
+	 * @description Displays a monthly calendar grid with year/month selection 
+	 * and highlights days with health data.
+	 * 
+	 * @example
+	 * ```svelte
+	 * <CalendarGrid
+	 *   year={2025}
+	 *   month={5}
+	 *   startDayOfWeek={1}
+	 *   healthData={healthRecords}
+	 *   onDateSelect={(event) => handleDateSelection(event.date)}
+	 *   onYearMonthChange={(event) => loadDataForYearMonth(event.year, event.month)}
+	 * />
+	 * ```
+	 */
 	import {
 		generateCalendarMonth,
 		getMonthName,
@@ -11,6 +30,16 @@
 	} from '$lib/features/calendar/types/index';
 	import { formatISO } from 'date-fns';
 
+	/**
+	 * Component props
+	 * @property {number} [year] - Current year to display (defaults to current year)
+	 * @property {number} [month] - Current month to display, 1-12 (defaults to current month)
+	 * @property {DayOfWeek} [startDayOfWeek] - First day of the week (0=Sunday, 1=Monday, etc.)
+	 * @property {DailyHealthRecord[]} [healthData] - Array of daily health records to display
+	 * @property {Function} [onDateSelect] - Callback when a date is selected
+	 * @property {Function} [onYearMonthChange] - Callback when year or month changes
+	 * @property {boolean} [resetSelector] - When true, resets the year/month selector to closed state
+	 */
 	let {
 		year = new Date().getFullYear(),
 		month = new Date().getMonth() + 1, // Corrects the return value of getMonth() to the calendar month(1-12)
@@ -29,25 +58,40 @@
 		resetSelector?: boolean;
 	}>();
 
+	/** State for year/month selector UI toggle */
 	let isYearMonthSelectorOpen = $state(false);
 
-	// Back to initial state when resetSelector is true
+	/**
+	 * Effect to reset year/month selector when resetSelector prop changes
+	 */
 	$effect(() => {
 		if (resetSelector) {
 			isYearMonthSelectorOpen = false;
 		}
 	});
 
+	/** Calendar weeks derived from current year, month and start day */
 	const weeks = $derived(generateCalendarMonth(year, month, startDayOfWeek));
+	
+	/** Array of day names based on startDayOfWeek */
 	const daysOfWeek = getDaysOfWeek(startDayOfWeek);
+	
+	/** Current month name derived from month number */
 	const monthName = $derived(getMonthName(month as MonthNumber));
 
-	// Check if a date has health data
+	/**
+	 * Toggles the year/month selector between year view and month view
+	 */
 	function toggleYearMonthSelector(): void {
 		isYearMonthSelectorOpen = !isYearMonthSelectorOpen;
 	}
 
-	// Handle year-month click event
+	/**
+	 * Handles year or month navigation and notifies parent component
+	 * 
+	 * @param {number} yearDelta - Number of years to add (positive) or subtract (negative)
+	 * @param {number} monthDelta - Number of months to add (positive) or subtract (negative)
+	 */
 	function changeYearMonth(yearDelta: number, monthDelta: number): void {
 		let newMonth = month + monthDelta;
 		let newYear = year + yearDelta;
@@ -69,13 +113,23 @@
 		}
 	}
 
-	// Check if a date has health data
+	/**
+	 * Checks if a date has associated health data
+	 * 
+	 * @param {Date} date - The date to check
+	 * @returns {boolean} True if health data exists for this date
+	 */
 	function hasHealthData(date: Date): boolean {
 		const dateStr = formatISO(date, { representation: 'date' });
 		return healthData.some((record: DailyHealthRecord) => record.date === dateStr);
 	}
 
-	// Handle day click event
+	/**
+	 * Handles click event on a calendar day
+	 * Formats the date to ISO format and triggers the onDateSelect callback
+	 * 
+	 * @param {Date} date - The clicked date
+	 */
 	function handleDayClick(date: Date): void {
 		const formattedISO = formatISO(date, { representation: 'date' });
 		onDateSelect?.({ date: formattedISO });
