@@ -1,31 +1,72 @@
 <script lang="ts">
+	/**
+	 * Modal component that displays content in a centered overlay
+	 *
+	 * @component
+	 * @example
+	 * ```svelte
+	 * <Modal isOpen={showModal} onClose={() => showModal = false}>
+	 *   {() => (
+	 *     <div>
+	 *       <h2>Modal Title</h2>
+	 *       <p>Modal content here</p>
+	 *     </div>
+	 *   )}
+	 * </Modal>
+	 * ```
+	 */
 	import type { Snippet } from 'svelte';
 
+	/**
+	 * Component props
+	 * @property {boolean} isOpen - Whether the modal is currently visible
+	 * @property {Function} [onClose] - Callback function to execute when modal is closed
+	 * @property {Snippet} [children] - Content to render inside the modal
+	 */
+
+	/**
+	 * Modal props with default values
+	 */
 	let {
 		isOpen = false,
-		close,
-		children
+		onClose,
+		children = undefined
 	} = $props<{
 		isOpen: boolean;
-		close?: () => void;
+		onClose?: () => void;
 		children?: Snippet;
 	}>();
 
+	/** Reference to the modal content DOM element for focus management */
 	let modalContent = $state<HTMLElement | null>(null);
 
-	function closeModal() {
-		close?.();
+	/**
+	 * Handles the modal close action and invokes the onClose callback if provided
+	 */
+	function handleClose(): void {
+		onClose?.();
 	}
 
-	// Close modal by ESC key
-	function handleKeydown(event: KeyboardEvent) {
+	/**
+	 * Handles keyboard events for accessibility
+	 * Closes the modal when the Escape key is pressed
+	 * @param {KeyboardEvent} event - The keyboard event
+	 */
+	function handleKeydown(event: KeyboardEvent): void {
 		if (event.key === 'Escape' && isOpen) {
-			closeModal();
+			handleClose();
 			event.preventDefault();
 			event.stopPropagation();
 		}
 	}
 
+	/**
+	 * Effect to manage modal behavior when opened or closed
+	 * - Prevents background scrolling when modal is open
+	 * - Adds/removes keyboard event listeners
+	 * - Manages focus for accessibility
+	 * - Cleans up when component is unmounted
+	 */
 	$effect(() => {
 		if (isOpen) {
 			// Prevent scrolling when modal is open
@@ -54,7 +95,7 @@
 </script>
 
 {#if isOpen}
-	<div class="modal-overlay" onclick={closeModal} onkeydown={handleKeydown} role="presentation">
+	<div class="modal-overlay" onclick={handleClose} onkeydown={handleKeydown} role="presentation">
 		<div
 			class="modal-content"
 			bind:this={modalContent}
@@ -64,7 +105,7 @@
 			aria-modal="true"
 			tabindex="-1"
 		>
-			<button type="button" class="close-button" onclick={closeModal} aria-label="Close modal">
+			<button type="button" class="close-button" onclick={handleClose} aria-label="Close modal">
 				&times;
 			</button>
 			{@render children?.()}

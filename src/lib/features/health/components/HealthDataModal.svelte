@@ -1,4 +1,19 @@
 <script lang="ts">
+	/**
+	 * Modal component for creating, viewing, editing, and deleting health records
+	 * 
+	 * @component
+	 * @example
+	 * ```svelte
+	 * <HealthDataModal
+	 *   isOpen={showModal}
+	 *   date="2025-05-15"
+	 *   dailyHealthRecord={selectedDayRecord}
+	 *   onClose={() => showModal = false}
+	 *   onDataUpdated={(record) => handleDataUpdated(record)}
+	 * />
+	 * ```
+	 */
 	import Modal from '$lib/common/components/Modal.svelte';
 	import {
 		createHealthRecord,
@@ -9,10 +24,19 @@
 	import type { HealthRecord } from '$lib/types/HealthRecord';
 	import type { DailyHealthRecord } from '$lib/features/calendar/types';
 
+	/**
+	 * Component props
+	 * @property {boolean} isOpen - Whether the modal is currently visible
+	 * @property {string} date - The date string in 'YYYY-MM-DD' format
+	 * @property {DailyHealthRecord | null} dailyHealthRecord - Calendar day info with hasHealthData flag
+	 * @property {Function} [onClose] - Callback function when modal is closed
+	 * @property {Function} [onDataUpdated] - Callback function when health record is updated/created/deleted
+	 */
 	let {
 		isOpen = false,
 		date = '',
-		dailyHealthRecord = { date: '', hasHealthData: false },
+		// dailyHealthRecord = { date: '', hasHealthData: false },
+		dailyHealthRecord = null,
 		onClose,
 		onDataUpdated
 	} = $props<{
@@ -23,13 +47,28 @@
 		onDataUpdated?: (record: HealthRecord | null) => void;
 	}>();
 
-	// Reactive variables
+	/** Safe version of dailyHealthRecord with default values if null */
+	const safeHealthRecord = $derived(dailyHealthRecord || { date: date, hasHealthData: false });
+
+	/** Current health record data being edited */
 	let healthRecord = $state<Partial<HealthRecord>>({ step_count: 0 });
+	
+	/** Loading state indicator */
 	let isLoading = $state(true);
+	
+	/** Error message if any operation fails */
 	let error = $state<string | null>(null);
+	
+	/** Human-readable formatted date for display */
 	let formattedDate = $state('');
 
-	// Function to format date for display (2025-05-01) -> May 1, 2025
+	/**
+	 * Formats a date string into a human-readable form
+	 * Converts YYYY-MM-DD to "Month Day, Year" format
+	 * 
+	 * @param {string} dateString - Date in YYYY-MM-DD format
+	 * @returns {string} Formatted date string (e.g., "May 15, 2025")
+	 */
 	function formatDisplayDate(dateString: string): string {
 		const date = new Date(dateString);
 		return date.toLocaleDateString('en-US', {
@@ -39,7 +78,14 @@
 		});
 	}
 
-	// Load health data for the selected date
+	/**
+	 * Loads health data for the selected date
+	 * If data exists, it fetches from the API
+	 * If no data exists, it initializes with default values
+	 * 
+	 * @async
+	 * @returns {Promise<void>}
+	 */
 	async function loadHealthData(): Promise<void> {
 		if (!date) return;
 
@@ -48,7 +94,7 @@
 		formattedDate = formatDisplayDate(date);
 
 		try {
-			if (dailyHealthRecord?.hasHealthData === false) {
+			if (!safeHealthRecord.hasHealthData) {
 				// No existing health data, set empty data
 				healthRecord = { date: date, step_count: 0 };
 			} else {
@@ -70,7 +116,13 @@
 		}
 	}
 
-	// Save health data
+	/**
+	 * Saves health record data (creates new or updates existing)
+	 * 
+	 * @async
+	 * @param {Event} event - Form submission event
+	 * @returns {Promise<void>}
+	 */
 	async function saveHealthData(event: Event): Promise<void> {
 		event.preventDefault();
 
@@ -100,7 +152,12 @@
 		}
 	}
 
-	// Delete health data
+	/**
+	 * Deletes the current health record
+	 * 
+	 * @async
+	 * @returns {Promise<void>}
+	 */
 	async function deleteHealthData(): Promise<void> {
 		if (!healthRecord?.date) return;
 
@@ -124,18 +181,28 @@
 		}
 	}
 
+	/**
+	 * Closes the modal and triggers the onClose callback
+	 */
 	function closeModal(): void {
 		onClose?.();
 	}
 
+	/**
+	 * Effect to load health data when modal is opened
+	 * Resets error state when modal is closed
+	 */
 	$effect(() => {
 		if (isOpen && date) {
 			loadHealthData();
+		} else {
+			error = null;
+			isLoading = false;
 		}
 	});
 </script>
 
-<Modal {isOpen} close={closeModal}>
+<Modal {isOpen} onClose={closeModal}>
 	<div class="health-data-modal">
 		{#if isLoading}
 			<div class="loading">Loading...</div>
