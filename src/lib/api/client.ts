@@ -3,7 +3,7 @@
  * @module api/client
  */
 
-import axios, { type AxiosInstance, AxiosError } from 'axios';
+import axios, { type AxiosInstance, type AxiosError } from 'axios';
 import type { ApiResponse } from '$lib/api/types';
 
 /** Base URL for API requests */
