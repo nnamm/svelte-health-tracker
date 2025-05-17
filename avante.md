@@ -19,7 +19,8 @@
 
 ## Project Context
 
-- Framework:
+- Frameworks:
   - Svelte v5
   - SvelteKit
 - Language: TypeScript
+- Container Platform: Docker
