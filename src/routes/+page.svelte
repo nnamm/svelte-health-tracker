@@ -21,6 +21,7 @@
 		selectedDate = event.date;
 		selectedDailyHealthRecord = healthData.find((record) => record.date == event.date) || {
 			date: event.date,
+			stepCount: 0,
 			hasHealthData: false
 		};
 		isModalOpen = true;
@@ -50,6 +51,7 @@
 			if (response.success && response.data) {
 				healthData = response.data.map((record: HealthRecord) => ({
 					date: record.date,
+					stepCount: record.step_count,
 					hasHealthData: true
 				}));
 			} else {

@@ -1,7 +1,7 @@
 <script lang="ts">
 	/**
 	 * Modal component for creating, viewing, editing, and deleting health records
-	 * 
+	 *
 	 * @component
 	 * @example
 	 * ```svelte
@@ -35,7 +35,6 @@
 	let {
 		isOpen = false,
 		date = '',
-		// dailyHealthRecord = { date: '', hasHealthData: false },
 		dailyHealthRecord = null,
 		onClose,
 		onDataUpdated
@@ -47,25 +46,28 @@
 		onDataUpdated?: (record: HealthRecord | null) => void;
 	}>();
 
-	/** Safe version of dailyHealthRecord with default values if null */
+	// Safe version of dailyHealthRecord with default values if null
 	const safeHealthRecord = $derived(dailyHealthRecord || { date: date, hasHealthData: false });
 
-	/** Current health record data being edited */
+	// Current health record data being edited
 	let healthRecord = $state<Partial<HealthRecord>>({ step_count: 0 });
-	
-	/** Loading state indicator */
+
+	// Loading state indicator
 	let isLoading = $state(true);
-	
-	/** Error message if any operation fails */
+
+	// Error message if any operation fails
 	let error = $state<string | null>(null);
-	
-	/** Human-readable formatted date for display */
+
+	// Human-readable formatted date for display
 	let formattedDate = $state('');
+
+	// Element reference for step count input
+	let stepCountInput = $state<HTMLInputElement | null>(null);
 
 	/**
 	 * Formats a date string into a human-readable form
 	 * Converts YYYY-MM-DD to "Month Day, Year" format
-	 * 
+	 *
 	 * @param {string} dateString - Date in YYYY-MM-DD format
 	 * @returns {string} Formatted date string (e.g., "May 15, 2025")
 	 */
@@ -82,7 +84,7 @@
 	 * Loads health data for the selected date
 	 * If data exists, it fetches from the API
 	 * If no data exists, it initializes with default values
-	 * 
+	 *
 	 * @async
 	 * @returns {Promise<void>}
 	 */
@@ -118,7 +120,7 @@
 
 	/**
 	 * Saves health record data (creates new or updates existing)
-	 * 
+	 *
 	 * @async
 	 * @param {Event} event - Form submission event
 	 * @returns {Promise<void>}
@@ -154,7 +156,7 @@
 
 	/**
 	 * Deletes the current health record
-	 * 
+	 *
 	 * @async
 	 * @returns {Promise<void>}
 	 */
@@ -195,6 +197,10 @@
 	$effect(() => {
 		if (isOpen && date) {
 			loadHealthData();
+
+			setTimeout(() => {
+				stepCountInput?.focus();
+			}, 200);
 		} else {
 			error = null;
 			isLoading = false;
@@ -224,6 +230,7 @@
 						min="0"
 						max="100000"
 						bind:value={healthRecord.step_count}
+						bind:this={stepCountInput}
 						required
 					/>
 				</div>

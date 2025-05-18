@@ -1,11 +1,11 @@
 <script lang="ts">
 	/**
 	 * Calendar Grid Component
-	 * 
+	 *
 	 * @component
-	 * @description Displays a monthly calendar grid with year/month selection 
+	 * @description Displays a monthly calendar grid with year/month selection
 	 * and highlights days with health data.
-	 * 
+	 *
 	 * @example
 	 * ```svelte
 	 * <CalendarGrid
@@ -28,6 +28,7 @@
 		type MonthNumber,
 		type DailyHealthRecord
 	} from '$lib/features/calendar/types/index';
+	import { tooltip } from '@svelte-plugins/tooltips';
 	import { formatISO } from 'date-fns';
 
 	/**
@@ -58,37 +59,33 @@
 		resetSelector?: boolean;
 	}>();
 
-	/** State for year/month selector UI toggle */
+	// State for year/month selector UI toggle
 	let isYearMonthSelectorOpen = $state(false);
 
-	/**
-	 * Effect to reset year/month selector when resetSelector prop changes
-	 */
+	// Effect to reset year/month selector when resetSelector prop changes
 	$effect(() => {
 		if (resetSelector) {
 			isYearMonthSelectorOpen = false;
 		}
 	});
 
-	/** Calendar weeks derived from current year, month and start day */
+	// Calendar weeks derived from current year, month and start day
 	const weeks = $derived(generateCalendarMonth(year, month, startDayOfWeek));
-	
-	/** Array of day names based on startDayOfWeek */
+
+	// Array of day names based on startDayOfWeek
 	const daysOfWeek = getDaysOfWeek(startDayOfWeek);
-	
-	/** Current month name derived from month number */
+
+	// Current month name derived from month number
 	const monthName = $derived(getMonthName(month as MonthNumber));
 
-	/**
-	 * Toggles the year/month selector between year view and month view
-	 */
+	// Toggles the year/month selector between year view and month view
 	function toggleYearMonthSelector(): void {
 		isYearMonthSelectorOpen = !isYearMonthSelectorOpen;
 	}
 
 	/**
 	 * Handles year or month navigation and notifies parent component
-	 * 
+	 *
 	 * @param {number} yearDelta - Number of years to add (positive) or subtract (negative)
 	 * @param {number} monthDelta - Number of months to add (positive) or subtract (negative)
 	 */
@@ -114,20 +111,44 @@
 	}
 
 	/**
-	 * Checks if a date has associated health data
-	 * 
+	 * Finds the health record for a specific date
+	 *
+	 * @param {Date} date - The date to search for
+	 * @returns {DailyHealthRecord | undefined} - The health record if found, otherwise undefined
+	 */
+	function findHealthRecordByDate(date: Date): DailyHealthRecord | undefined {
+		const dateStr = formatISO(date, { representation: 'date' });
+		return healthData.find((record: DailyHealthRecord) => record.date === dateStr);
+	}
+
+	/**
+	 * Checks if health data exists for a specific date
+	 *
 	 * @param {Date} date - The date to check
-	 * @returns {boolean} True if health data exists for this date
+	 * @returns {boolean} - True if health data exists for the date, false otherwise
 	 */
 	function hasHealthData(date: Date): boolean {
-		const dateStr = formatISO(date, { representation: 'date' });
-		return healthData.some((record: DailyHealthRecord) => record.date === dateStr);
+		return findHealthRecordByDate(date) !== undefined;
+	}
+
+	/**
+	 * Gets the health data (step count) for a specific date
+	 *
+	 * @param {Date} date - The date to get health data for
+	 * @returns {string} - Step count as a string or empty string if no data exists
+	 */
+	function getHealthData(date: Date): string {
+		const record = findHealthRecordByDate(date);
+		if (record && record.hasHealthData) {
+			return record.stepCount.toString() || 'Data available';
+		}
+		return '';
 	}
 
 	/**
 	 * Handles click event on a calendar day
 	 * Formats the date to ISO format and triggers the onDateSelect callback
-	 * 
+	 *
 	 * @param {Date} date - The clicked date
 	 */
 	function handleDayClick(date: Date): void {
@@ -180,6 +201,9 @@
 						onclick={() => handleDayClick(day.date)}
 						tabindex="0"
 						onkeydown={(e) => e.key === 'Enter' && handleDayClick(day.date)}
+						use:tooltip={hasHealthData(day.date)
+							? { content: `Steps: ${getHealthData(day.date)}`, theme: 'health-tooltip' }
+							: null}
 					>
 						{day.date.getDate()}
 						{#if hasHealthData(day.date)}
@@ -201,6 +225,15 @@
 		--font-base: #333;
 		--weight-base: 300;
 		--weight-bold: 500;
+	}
+
+	:global(.tooltip.health-tooltip) {
+		--tooltip-background-color: #007bff;
+		--tooltip-text-color: white;
+		--tooltip-border-radius: 4px;
+		--tooltip-box-shadow: 0 2px 8px rgba(0, 123, 255, 0.3);
+		font-weight: 500;
+		padding: 4px 8px;
 	}
 
 	.calendar-container {
