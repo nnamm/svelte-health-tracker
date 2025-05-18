@@ -6,7 +6,7 @@
 
 /**
  * Represents a single day in the calendar grid
- * 
+ *
  * @interface CalendarDay
  * @property {Date} date - JavaScript Date object for this calendar day
  * @property {boolean} isCurrentMonth - Whether this day belongs to the currently displayed month
@@ -21,13 +21,14 @@ export interface CalendarDay {
 /**
  * Represents health data status for a specific day
  * Used to track which days have health records
- * 
+ *
  * @interface DailyHealthRecord
  * @property {string} date - Date string in YYYY-MM-DD format
  * @property {boolean} hasHealthData - Whether health data exists for this day
  */
 export interface DailyHealthRecord {
 	date: string;
+	stepCount: number;
 	hasHealthData: boolean;
 }
 
