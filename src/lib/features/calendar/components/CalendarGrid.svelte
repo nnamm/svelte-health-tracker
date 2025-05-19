@@ -203,7 +203,7 @@
 						onkeydown={(e) => e.key === 'Enter' && handleDayClick(day.date)}
 						use:tooltip={hasHealthData(day.date)
 							? { content: `Steps: ${getHealthData(day.date)}`, theme: 'health-tooltip' }
-							: null}
+							: (undefined as any)}
 					>
 						{day.date.getDate()}
 						{#if hasHealthData(day.date)}
