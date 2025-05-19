@@ -1,0 +1,26 @@
+# AI Assistant Configuration
+
+## 使用モデルの優先順位
+
+1. claude-3.7-sonnet
+2. claude-3.7-sonnet-thinking
+3. gemini-2.5-pro-preview-05-06
+4. o3
+
+## Default Instructions
+
+- 常に最新の技術情報を確認するためにウェブサーチを使用してください
+- 提案するコード内のコメント文は英語にしてください
+- このプロジェクトは Svelte v5 を使用しています。最新の構文に従ってください（シンタックスチェックなどはウェブサーチしてください）
+- 参照している情報源の URL を可能の限り提示してください
+- 本プロジェクトは学習目的の開発のため、できるだけ丁寧に解説してください
+- 学習目的でも最終的にはプロダクション環境へのデプロイを予定しているため、コードの品質は高くしたい
+- 日本語で回答してください
+
+## Project Context
+
+- Frameworks:
+  - Svelte v5
+  - SvelteKit
+- Language: TypeScript
+- Container Platform: Docker
