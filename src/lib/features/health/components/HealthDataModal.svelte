@@ -25,26 +25,29 @@
 	import type { DailyHealthRecord } from '$lib/features/calendar/types';
 
 	/**
-	 * Component props
-	 * @property {boolean} isOpen - Whether the modal is currently visible
-	 * @property {string} date - The date string in 'YYYY-MM-DD' format
-	 * @property {DailyHealthRecord | null} dailyHealthRecord - Calendar day info with hasHealthData flag
-	 * @property {Function} [onClose] - Callback function when modal is closed
-	 * @property {Function} [onDataUpdated] - Callback function when health record is updated/created/deleted
+	 * Properties for the HealthDataModal component
+	 * @interface HealthDataModalProps
 	 */
+	interface HealthDataModalProps {
+		/** Whether the modal is currently visible */
+		isOpen: boolean;
+		/** The date string in 'YYYY-MM-DD' format */
+		date: string;
+		/** Calendar day info with hasHealthData flag */
+		dailyHealthRecord: DailyHealthRecord | null;
+		/** Callback function when modal is closed */
+		onClose?: () => void;
+		/** Callback function when health record is updated/created/deleted */
+		onDataUpdated?: (record: HealthRecord | null) => void;
+	}
+
 	let {
 		isOpen = false,
 		date = '',
 		dailyHealthRecord = null,
 		onClose,
 		onDataUpdated
-	} = $props<{
-		isOpen: boolean;
-		date: string;
-		dailyHealthRecord: DailyHealthRecord | null;
-		onClose?: () => void;
-		onDataUpdated?: (record: HealthRecord | null) => void;
-	}>();
+	}: HealthDataModalProps = $props();
 
 	// Safe version of dailyHealthRecord with default values if null
 	const safeHealthRecord = $derived(dailyHealthRecord || { date: date, hasHealthData: false });
