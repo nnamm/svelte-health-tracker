@@ -5,13 +5,25 @@
 	import VisualizationSelector from '$lib/features/visualization/components/VisualizationSelector.svelte';
 	import type { HealthRecord } from '$lib/types/HealthRecord';
 
-	// Get date from page parameters
-	let { data } = $props<{ date: string }>();
+	// Correct way to recieve data from load function
+	let { data } = $props<{
+		data: {
+			date: string;
+			meta: {
+				title: string;
+				description: string;
+			};
+		};
+	}>();
+
+	// Extract date from the data object returned by load function
 	const date = $derived(data.date);
+	const pageTitle = $derived(data.meta.title);
+	const pageDiscription = $derived(data.meta.description);
 
 	// Define states
 	let healthRecord = $state<HealthRecord | null>(null);
-	let isLoading = $state(true);
+	let isLoading = $state(false);
 	let error = $state<string | null>(null);
 
 	// Load health data
@@ -27,12 +39,17 @@
 			if (response.success && response.data) {
 				healthRecord = response.data;
 			} else {
-				error = response.error || 'Health data not found';
-				healthRecord = null;
+				// Differentiate between "no data" and actual errors
+				if (response.error?.includes('not found')) {
+					healthRecord = null; // No data exists for this date
+				} else {
+					error = response.error || 'Failed to load health data';
+					healthRecord = null;
+				}
 			}
 		} catch (err) {
 			console.error('Error retrieving health data: ', err);
-			error = 'An error occurred while loading health data';
+			error = 'An unexpected error occurred while loading health data';
 			healthRecord = null;
 		} finally {
 			isLoading = false;
@@ -53,47 +70,69 @@
 </script>
 
 <svelte:head>
-	<title>Health Data Visualization - {date || 'Loading...'}</title>
+	<title>{pageTitle}</title>
+	<meta name="description" content={pageDiscription} />
 </svelte:head>
 
 <div class="health-visualization-page">
-  <header>
-    <h1>Health Data Visualization</h1>
-    <p class="date">{date ? new Date(date).toLocaleDateString('en-US', { year: 'numeric', month: 'long', day: 'numeric' }) : ''}</p>
-  </header>
-  
-  {#if isLoading}
-    <div class="loading-indicator">Loading data...</div>
-  {:else if error}
-    <div class="error-message">{error}</div>
-  {:else}
-    <div class="visualization-section">
-      <Visualization {healthRecord} />
-      
-      {#if healthRecord}
-        <div class="data-summary">
+	<header>
+		<h1>Health Data Visualization</h1>
+		<p class="date">
+			{date
+				? new Date(date).toLocaleDateString('en-US', {
+						year: 'numeric',
+						month: 'long',
+						day: 'numeric'
+					})
+				: ''}
+		</p>
+	</header>
+
+	{#if isLoading}
+		<div class="loading-indicator">
+			<div class="spinner"></div>
+			<p>Loading health data...</p>
+		</div>
+	{:else if error}
+		<div class="error-message">
+			<h3>Error</h3>
+			<p>{error}</p>
+			<button onclick={() => loadHealthData()} class="retry-button"> Retry </button>
+		</div>
+	{:else}
+		<div class="visualization-section">
+			<Visualization {healthRecord} />
+
+			{#if healthRecord}
+				<div class="data-summary">
 					<h2>Health Data</h2>
 					<p class="step-count">
 						<span class="label">Step count: </span>
-						<span class="value">{healthRecord.step_count.toLocaleString()}</span> steps
+						<span class="value">{healthRecord.step_count.toLocaleString()}</span>
 					</p>
 					<p class="recorded-at">
 						<span class="label">Date recorded: </span>
 						<span class="value">{new Date(healthRecord.created_at).toLocaleString('ja-JP')}</span>
 					</p>
 				</div>
-      {/if}
-    </div>
-    
-    <VisualizationSelector />
-  {/if}
+			{:else}
+				<div class="no-data-message">
+					<h3>No health data found</h3>
+					<p>No health data has been recorded for {date}. Would you like to add some data?</p>
+					<a href="/#" class="back-link">← Back to Calendar</a>
+				</div>
+			{/if}
+		</div>
+
+		<VisualizationSelector />
+	{/if}
 </div>
 
 <style>
 	.health-visualization-page {
-		max-width: 1000px;
+		width: 100%;
 		margin: 0 auto;
-		padding: 2rem 1rem;
+		padding: 2rem 0rem;
 	}
 
 	header {
@@ -102,7 +141,14 @@
 	}
 
 	h1 {
-		margin: 0 0 0.5rem;
+		margin-bottom: 0.75rem;
+		font-size: 2rem;
+		font-weight: 500;
+	}
+
+	h2,
+	h3 {
+		font-weight: 400;
 	}
 
 	.date {
@@ -111,12 +157,15 @@
 		margin: 0;
 	}
 
+	/* .library-loading, */
 	.loading-indicator,
-	.error-message {
+	.error-message,
+	.no-data-message {
 		text-align: center;
 		padding: 2rem;
 		background: #f9f9f9;
 		border-radius: 8px;
+		margin-bottom: 2rem;
 	}
 
 	.error-message {
@@ -124,12 +173,63 @@
 		background: #ffebee;
 	}
 
-	.visualization-section {
-		margin-bottom: 2rem;
+	.no-data-message {
+		background: #e3f2fd;
 	}
 
+	.spinner {
+		display: inline-block;
+		width: 40px;
+		height: 40px;
+		margin: 0 auto 1rem;
+		border: 4px solid rgba(0, 123, 255, 0.2);
+		border-radius: 50%;
+		border-top-color: #007bff;
+		animation: spin 1s ease-in-out infinite;
+	}
+
+	@keyframes spin {
+		to {
+			transform: rotate(360deg);
+		}
+	}
+
+	.retry-button,
+	.back-link {
+		display: inline-block;
+		padding: 0.75rem 1.5rem;
+		margin-top: 1rem;
+		background: #007bff;
+		color: white;
+		text-decoration: none;
+		border-radius: 4px;
+		border: none;
+		cursor: pointer;
+		transition: background 0.2s ease;
+	}
+
+	.retry-button:hover,
+	.back-link:hover {
+		background: #0056b3;
+	}
+
+	.visualization-section {
+		margin-bottom: 2rem;
+		position: relative;
+	}
+
+	/* .library-loading { */
+	/* 	position: absolute; */
+	/* 	top: 50%; */
+	/* 	left: 50%; */
+	/* 	transform: translate(-50%, -50%); */
+	/* 	z-index: 10; */
+	/* 	background: rgba(255, 255, 255, 0.9); */
+	/* 	border: 1px solid #ddd; */
+	/* } */
+
 	.data-summary {
-		margin-top: 1.5rem;
+		margin: 2rem;
 		padding: 1rem 1.5rem;
 		background: #f5f5f5;
 		border-radius: 8px;
@@ -140,18 +240,24 @@
 		font-size: 1.4rem;
 	}
 
+	.step-count,
+	.recorded-at {
+		margin-top: 0.5rem;
+	}
+
 	.label {
-		font-weight: bold;
+		font-weight: 400;
 		color: #555;
 	}
 
 	.value {
+		font-weight: 200;
 		font-size: 1.1rem;
 	}
 
 	.step-count .value {
 		color: #007bff;
-		font-weight: bold;
-		font-size: 1.4rem;
+		font-weight: 500;
+		font-size: 1.2rem;
 	}
 </style>

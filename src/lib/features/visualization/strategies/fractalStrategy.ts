@@ -1,12 +1,19 @@
 import * as THREE from 'three';
-import type { VisualizationStrategy, VisualizationOptions } from './types';
+import type { VisualizationStrategy, VisualizationOptions, VisualizationInstance } from './types';
+import { detectPerformanceLevel, getMaxVertexCountForPerformance } from './helpers';
 
 export const fractalStrategy: VisualizationStrategy = {
 	name: 'Fractal',
 	description: 'Fractal patterns with complexity that changes based on step count.',
 	// thumbnail: '';
 
-	create(container, stepCount, options: VisualizationOptions = {}) {
+	create(container, stepCount, options: VisualizationOptions = {}): VisualizationInstance {
+		// Pattern generation state
+		const state = {
+			stepCount,
+			isAnimating: false
+		};
+
 		// Initialize the scene
 		const scene = new THREE.Scene();
 		const camera = new THREE.PerspectiveCamera(
@@ -37,16 +44,20 @@ export const fractalStrategy: VisualizationStrategy = {
 		let mesh: THREE.Mesh;
 
 		function generateFractalGeometory(steps: number) {
+			// Set complexity based on device perfomance
+			const performanceLevel = detectPerformanceLevel();
+			const maxVetrexCount = getMaxVertexCountForPerformance(performanceLevel);
+
 			// Set polygon count limit using logarithmic scale
-			const complexity = Math.log10(Math.max(steps, 1)) * 500;
-			const vertexCount = Math.min(complexity, 2000);
+			const complexity = Math.log10(Math.max(steps, 1)) * 300;
+			const vertexCount = Math.min(complexity, maxVetrexCount);
 
 			// Generate fractal geometry
 			const vertices: number[] = [];
 			const indices: number[] = [];
 
 			// Use step count as seed value for the fractal
-			const fractalDepth = Math.min(Math.floor(Math.log10(steps) * 2), 7);
+			const fractalDepth = Math.min(Math.floor(Math.log10(steps)), 4);
 			const scale = 2.0;
 
 			// Basic triangle vertices
@@ -132,14 +143,22 @@ export const fractalStrategy: VisualizationStrategy = {
 				const ambientLight = new THREE.AmbientLight(0x404040, 1);
 				scene.add(ambientLight);
 			}
+
+			// Use requestIdleCallback for progressive rendering if available
+			if ('requestIdleCallback' in window) {
+				window.requestIdleCallback(() => {
+					geometry.computeVertexNormals();
+				});
+			} else {
+				geometry.computeVertexNormals();
+			}
 		}
 
 		// Generate initial fractal
-		generateFractalGeometory(stepCount);
+		generateFractalGeometory(state.stepCount);
 
 		// Set up animation
 		let animationId: number;
-		let isAnimating = false;
 		const animationSpeed = options.animationSpeed || 1;
 
 		function animate() {
@@ -166,8 +185,8 @@ export const fractalStrategy: VisualizationStrategy = {
 
 		// Start animation if autoPlay is true or not specified
 		if (options.autoPlay !== false) {
+			state.isAnimating = true;
 			animate();
-			isAnimating = true;
 		}
 
 		// Return instance
@@ -175,37 +194,48 @@ export const fractalStrategy: VisualizationStrategy = {
 			render: () => {
 				renderer.render(scene, camera);
 			},
-			update: (newStepCount: number) => {
-				generateFractalGeometory(newStepCount);
-			},
 			destroy: () => {
 				cancelAnimationFrame(animationId);
+				if (scene) {
+					scene.traverse((object) => {
+						if (object instanceof THREE.Mesh) {
+							if (object.geometry) object.geometry.dispose();
+							if (object.material) {
+								if (Array.isArray(object.material)) {
+									object.material.forEach((material) => material.dispose());
+								} else {
+									object.material.dispose();
+								}
+							}
+						}
+					});
+				}
+				if (renderer) renderer.dispose();
 				window.removeEventListener('resize', handleResize);
 				if (mesh) scene.remove(mesh);
 				geometry.dispose();
 				if (container.contains(renderer.domElement)) {
 					container.removeChild(renderer.domElement);
 				}
-				renderer.dispose();
-			},
-			start: () => {
-				if (!isAnimating) {
-					animate();
-					isAnimating = true;
-				}
-			},
-			stop: () => {
-				if (isAnimating) {
-					cancelAnimationFrame(animationId);
-					isAnimating = false;
-				}
-			},
-			isAnimating: () => isAnimating,
-			resize: (width: number, height: number) => {
-				camera.aspect = width / height;
-				camera.updateProjectionMatrix();
-				renderer.setSize(width, height);
 			}
+			// start: () => {
+			// 	if (!isAnimating) {
+			// 		animate();
+			// 		isAnimating = true;
+			// 	}
+			// },
+			// stop: () => {
+			// 	if (isAnimating) {
+			// 		cancelAnimationFrame(animationId);
+			// 		isAnimating = false;
+			// 	}
+			// },
+			// isAnimating: () => isAnimating,
+			// resize: (width: number, height: number) => {
+			// 	camera.aspect = width / height;
+			// 	camera.updateProjectionMatrix();
+			// 	renderer.setSize(width, height);
+			// }
 		};
 	}
 };

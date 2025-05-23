@@ -1,7 +1,3 @@
-<!-- <nav> -->
-<!-- 	<a href="/">Home</a> -->
-<!-- </nav> -->
-
 <main>
 	<slot />
 </main>
@@ -13,9 +9,7 @@
 <style>
 	main {
 		width: 100%;
-		max-width: 1200px;
 		margin: 0 auto;
-		padding: 0 1rem;
 	}
 
 	/* footer { */

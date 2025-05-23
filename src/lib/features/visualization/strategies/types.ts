@@ -58,30 +58,25 @@ export interface VisualizationInstance {
 	// Basic functions
 	// Renders a single frame of the visualization
 	render: () => void;
-	/**
-	 * Updates the visualization with a new step count
-	 * @param {number} stepCount - New number of steps/iterations to visualize
-	 */
-	update: (stepCount: number) => void;
 	//Cleans up and removes the visualization from the DOM
 	destroy: () => void;
 
-	// Animation contorol
-	// Starts or resumes the animation
-	start?: () => void;
-	// Pauses the animation
-	stop?: () => void;
+	// // Animation contorol
+	// // Starts or resumes the animation
+	// start?: () => void;
+	// // Pauses the animation
+	// stop?: () => void;
 
-	// Utility functions
-	/**
-	 * Resizes the visualization to new dimensions
-	 * @param {number} width - New width in pixels
-	 * @param {number} height - New height in pixels
-	 */
-	resize?: (width: number, height: number) => void;
-	/**
-	 * Checks if the visualization is currently animating
-	 * @returns {boolean} True if animation is running, false otherwise
-	 */
-	isAnimating?: () => boolean;
+	// // Utility functions
+	// /**
+	//  * Resizes the visualization to new dimensions
+	//  * @param {number} width - New width in pixels
+	//  * @param {number} height - New height in pixels
+	//  */
+	// resize?: (width: number, height: number) => void;
+	// /**
+	//  * Checks if the visualization is currently animating
+	//  * @returns {boolean} True if animation is running, false otherwise
+	//  */
+	// isAnimating?: () => boolean;
 }

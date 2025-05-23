@@ -1,18 +1,12 @@
 <script lang="ts">
 	import { visualizationStrategies } from '../strategies';
-	import { selectedStrategyKey, selectStrategy } from '../stores/visualizationStore';
+	import { getSelectedStrategyKey, selectStrategy } from '../stores/visualizationStore.svelte';
 
 	// Get an array of available strategies
-	// const strategies = $derived(
-	// 	Object.entries(visualizationStrategies).map(([key, strategy]) => ({
-	// 		key,
-	// 		...strategy
-	// 	}))
-	// );
 	const strategies = Object.entries(visualizationStrategies).map(([key, strategy]) => ({
-    key,
-    ...strategy
-  }));
+		key,
+		...strategy
+	}));
 </script>
 
 <div class="visualization-selector">
@@ -22,7 +16,7 @@
 		{#each strategies as strategy (strategy.key)}
 			<button
 				class="strategy-card"
-				class:selected={$selectedStrategyKey === strategy.key}
+				class:selected={getSelectedStrategyKey() === strategy.key}
 				onclick={() => selectStrategy(strategy.key)}
 			>
 				{#if strategy.thumbnail}
@@ -42,7 +36,12 @@
 
 <style>
 	.visualization-selector {
-		margin: 2rem 0;
+		margin: 2rem 1.5rem;
+		padding: 1rem;
+	}
+
+	h3 {
+		font-weight: 400;
 	}
 
 	.strategy-cards {
@@ -87,6 +86,7 @@
 	.strategy-info h4 {
 		margin: 0 0 0.5rem;
 		font-size: 1.1rem;
+		font-weight: 600;
 	}
 
 	.strategy-info p {
