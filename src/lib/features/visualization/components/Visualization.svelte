@@ -1,6 +1,10 @@
 <script lang="ts">
 	import { onMount, onDestroy } from 'svelte';
-	import { currentStrategy, visualizationOptions } from '../stores/visualizationStore';
+	import {
+		getCurrentStrategy,
+		getVisualizationOptions,
+		getSelectedStrategyKey
+	} from '../stores/visualizationStore.svelte';
 	import type { VisualizationInstance } from '../strategies/types';
 	import type { HealthRecord } from '$lib/types/HealthRecord';
 
@@ -12,20 +16,20 @@
 	// Container and visualization instance state
 	let container = $state<HTMLElement | null>(null);
 	let visualization = $state<VisualizationInstance | null>(null);
+	// let isLibraryLoaded = $state(false);
+	let currentStrategyKey = $state<string | null>(getSelectedStrategyKey());
 
-	// Initializa or update visualization
-	function initOrUpdateVisualization(): void {
+	// Initializa visualization
+	async function initVisualization(): Promise<void> {
 		if (!container || !healthRecord) return;
 
+		// Load health data
 		const stepCount = healthRecord.step_count;
 
-		if (visualization) {
-			// Update existing visualization
-			visualization.update(stepCount);
-		} else {
-			// Create new visualization
-			visualization = $currentStrategy.create(container, stepCount, $visualizationOptions);
-		}
+		// Create new visualization
+		cleanupVisualization();
+		visualization = getCurrentStrategy().create(container, stepCount, getVisualizationOptions());
+		// }
 	}
 
 	// Clearnup function
@@ -36,25 +40,28 @@
 		}
 	}
 
-	// Reinitialize if strategy is changed
 	$effect(() => {
-		cleanupVisualization();
-		initOrUpdateVisualization();
-	});
+		const newStrategyKey = getSelectedStrategyKey();
 
-	// Update when health data changes
-	$effect(() => {
-		if (healthRecord && visualization) {
-			visualization.update(healthRecord.step_count);
+		if (currentStrategyKey !== newStrategyKey) {
+			console.log('Strategy changed, reinitializing visualization');
+			currentStrategyKey = newStrategyKey;
+
+			if (container && healthRecord) {
+				cleanupVisualization();
+				visualization = getCurrentStrategy().create(
+					container,
+					healthRecord.step_count,
+					getVisualizationOptions()
+				);
+			}
 		}
 	});
 
-	// Initialize when component is mounted
 	onMount(() => {
-		initOrUpdateVisualization();
+		initVisualization();
 	});
 
-	// Cleanup when component is removed
 	onDestroy(() => {
 		cleanupVisualization();
 	});
@@ -69,10 +76,8 @@
 <style>
 	.visualization-container {
 		width: 100%;
-		height: 500px;
+		height: 600px;
 		position: relative;
-		background: #f5f5f5;
-		border-radius: 8px;
 		overflow: hidden;
 	}
 
