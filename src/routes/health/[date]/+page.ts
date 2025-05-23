@@ -16,21 +16,45 @@ export async function load({ params }) {
 		throw error(400, 'Invalid date provided');
 	}
 
+	// // Preload visualization libraries in browser
+	// if (browser) {
+	// 	// Start preloading Three.js and other heavy libraries
+	// 	const preloadPromises = [
+	// 		import('three').catch((err) => {
+	// 			console.warn('Failed to preload Three.js: ', err);
+	// 			return null;
+	// 		})
+	// 		// Preload other heavy visualization libraries if needed
+	// 		// import('some-other-library').catch(() => null)
+	// 	];
+	//
+	// 	// Don't await these - let them load in background
+	// 	Promise.all(preloadPromises).then((results) => {
+	// 		console.log('Visualization libraries preloaded: ', results.filter(Boolean).length);
+	// 	});
+	// }
+
 	// Preload visualization libraries in browser
 	if (browser) {
-		// Start preloading Three.js and other heavy libraries
-		const preloadPromises = [
-			import('three').catch((err) => {
-				console.warn('Failed to preload Three.js: ', err);
-				return null;
-			})
-			// Preload other heavy visualization libraries if needed
-			// import('some-other-library').catch(() => null)
+		// Start preloading Three.js and other libraries
+		const preloadTasks = [
+			() =>
+				import('three').catch((err) => {
+					console.warn('Three.js preload failed: ', err);
+					return null;
+				})
+
+			// () =>
+			// 	import('p5').catch((err) => {
+			// 		console.warn('p5.js preload failed: ', err);
+			// 		return null;
+			// 	})
 		];
 
-		// Don't await these - let them load in background
-		Promise.all(preloadPromises).then((results) => {
-			console.log('Visualization libraries preloaded: ', results.filter(Boolean).length);
+		// Async preload execution
+		Promise.allSettled(preloadTasks.map((task) => task())).then((results) => {
+			const loaded = results.filter((result) => result.status == 'fulfilled' && result.value);
+			console.log(`Preloaded ${loaded.length} visualization libraries`);
 		});
 	}
 
@@ -46,4 +70,3 @@ export async function load({ params }) {
 		}
 	};
 }
-
