@@ -3,6 +3,7 @@
 	import { getHealthRecordByDate } from '$lib/features/health/services/healthDataService';
 	import Visualization from '$lib/features/visualization/components/Visualization.svelte';
 	import VisualizationSelector from '$lib/features/visualization/components/VisualizationSelector.svelte';
+	import { DateUtils } from '$lib/utils/dateUtils';
 	import type { HealthRecord } from '$lib/types/HealthRecord';
 
 	// Correct way to recieve data from load function
@@ -78,13 +79,7 @@
 	<header>
 		<h1>Health Data Visualization</h1>
 		<p class="date">
-			{date
-				? new Date(date).toLocaleDateString('en-US', {
-						year: 'numeric',
-						month: 'long',
-						day: 'numeric'
-					})
-				: ''}
+			{date ? DateUtils.formatForDisplay(date) : ''}
 		</p>
 	</header>
 
@@ -105,7 +100,6 @@
 
 			{#if healthRecord}
 				<div class="data-summary">
-					<h2>Health Data</h2>
 					<p class="step-count">
 						<span class="label">Step count: </span>
 						<span class="value">{healthRecord.step_count.toLocaleString()}</span>
@@ -146,7 +140,6 @@
 		font-weight: 500;
 	}
 
-	h2,
 	h3 {
 		font-weight: 400;
 	}
@@ -157,7 +150,6 @@
 		color: #666;
 	}
 
-	/* .library-loading, */
 	.loading-indicator,
 	.error-message,
 	.no-data-message {
@@ -215,7 +207,6 @@
 
 	.visualization-section {
 		position: relative;
-		margin-bottom: 2rem;
 	}
 
 	.data-summary {
@@ -225,14 +216,8 @@
 		border-radius: 8px;
 	}
 
-	.data-summary h2 {
-		margin-top: 0;
-		font-size: 1.4rem;
-	}
-
-	.step-count,
 	.recorded-at {
-		margin-top: 0.5rem;
+		margin-top: 1rem;
 	}
 
 	.label {
