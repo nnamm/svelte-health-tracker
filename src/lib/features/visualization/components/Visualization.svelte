@@ -75,9 +75,9 @@
 
 <style>
 	.visualization-container {
+		position: relative;
 		width: 100%;
 		height: 600px;
-		position: relative;
 		overflow: hidden;
 	}
 
@@ -85,9 +85,9 @@
 		position: absolute;
 		top: 50%;
 		left: 50%;
-		transform: translate(-50%, -50%);
-		text-align: center;
-		color: #888;
 		font-style: italic;
+		color: #888;
+		text-align: center;
+		transform: translate(-50%, -50%);
 	}
 </style>

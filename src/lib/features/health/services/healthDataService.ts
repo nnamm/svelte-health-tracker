@@ -13,20 +13,20 @@ const ENDPOINT = import.meta.env.VITE_API_ENDPOINT || '/health/records';
 
 /**
  * Creates a new health record in the system
- * 
+ *
  * @async
  * @function createHealthRecord
  * @param {Partial<HealthRecord>} healthRecord - The health record data to create
  * @returns {Promise<ApiResponse<HealthRecord>>} The created health record or null if creation failed
  * @throws {Error} When API request fails
- * 
+ *
  * @example
  * ```typescript
  * const result = await createHealthRecord({
  *   date: '2023-05-15',
  *   step_count: 8500
  * });
- * 
+ *
  * if (result.success && result.data) {
  *   console.log('Created record ID:', result.data.id);
  * }
@@ -48,17 +48,17 @@ export async function createHealthRecord(
 
 /**
  * Retrieves a health record for a specific date
- * 
+ *
  * @async
  * @function getHealthRecordByDate
  * @param {string} date - The date in 'YYYY-MM-DD' format
  * @returns {Promise<ApiResponse<HealthRecord>>} The health record for the date or null if not found
  * @throws {Error} When API request fails
- * 
+ *
  * @example
  * ```typescript
  * const result = await getHealthRecordByDate('2023-05-15');
- * 
+ *
  * if (result.success && result.data) {
  *   console.log('Steps:', result.data.step_count);
  * } else {
@@ -87,17 +87,17 @@ export async function getHealthRecordByDate(date: string): Promise<ApiResponse<H
 
 /**
  * Gets all health records for a specific year
- * 
+ *
  * @async
  * @function getHealthRecordsByYear
  * @param {number} year - The year (YYYY)
  * @returns {Promise<ApiResponse<HealthRecord[]>>} Array of health records for the year
  * @throws {Error} When API request fails
- * 
+ *
  * @example
  * ```typescript
  * const result = await getHealthRecordsByYear(2023);
- * 
+ *
  * if (result.success) {
  *   console.log(`Found ${result.data.length} records for 2023`);
  * }
@@ -117,18 +117,18 @@ export async function getHealthRecordsByYear(year: number): Promise<ApiResponse<
 
 /**
  * Gets all health records for a specific year and month
- * 
+ *
  * @async
  * @function getHealthRecordsByYearMonth
  * @param {number} year - The year (YYYY)
  * @param {number} month - The month (1-12)
  * @returns {Promise<ApiResponse<HealthRecord[]>>} Array of health records for the year and month
  * @throws {Error} When API request fails
- * 
+ *
  * @example
  * ```typescript
  * const result = await getHealthRecordsByYearMonth(2023, 5);
- * 
+ *
  * if (result.success) {
  *   console.log(`Found ${result.data.length} records for May 2023`);
  * }
@@ -152,20 +152,20 @@ export async function getHealthRecordsByYearMonth(
 
 /**
  * Updates an existing health record
- * 
+ *
  * @async
  * @function updateHealthRecord
  * @param {Partial<HealthRecord>} healthRecord - The health record data to update (must include id or date)
  * @returns {Promise<ApiResponse<HealthRecord>>} The updated health record or null if update failed
  * @throws {Error} When API request fails
- * 
+ *
  * @example
  * ```typescript
  * const result = await updateHealthRecord({
  *   id: 123,
  *   step_count: 10000
  * });
- * 
+ *
  * if (result.success) {
  *   console.log('Record updated successfully');
  * }
@@ -187,17 +187,17 @@ export async function updateHealthRecord(
 
 /**
  * Deletes a health record for a specific date
- * 
+ *
  * @async
  * @function deleteHealthRecord
  * @param {string} date - The date in 'YYYY-MM-DD' format
  * @returns {Promise<ApiResponse<boolean>>} True if deletion was successful, false otherwise
  * @throws {Error} When API request fails
- * 
+ *
  * @example
  * ```typescript
  * const result = await deleteHealthRecord('2023-05-15');
- * 
+ *
  * if (result.success && result.data) {
  *   console.log('Record deleted successfully');
  * }

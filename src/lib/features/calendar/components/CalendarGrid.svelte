@@ -234,9 +234,10 @@
 		--tooltip-background-color: #007bff;
 		--tooltip-text-color: white;
 		--tooltip-border-radius: 4px;
-		--tooltip-box-shadow: 0 2px 8px rgba(0, 123, 255, 0.3);
-		font-weight: 500;
+		--tooltip-box-shadow: 0 2px 8px rgb(0 123 255 / 30%);
+
 		padding: 4px 8px;
+		font-weight: 500;
 	}
 
 	.calendar-container {
@@ -329,11 +330,11 @@
 		position: absolute;
 		bottom: 3px;
 		left: 50%;
-		transform: translateX(-50%);
 		width: 6px;
 		height: 6px;
-		border-radius: 50%;
 		background-color: #007bff;
+		border-radius: 50%;
+		transform: translateX(-50%);
 	}
 
 	i {

@@ -264,8 +264,8 @@
 	}
 
 	h2 {
-		font-size: 1.5rem;
 		margin: 0;
+		font-size: 1.5rem;
 	}
 
 	.health-form {
@@ -285,9 +285,9 @@
 	input {
 		width: 100%;
 		padding: 0.75rem;
+		font-size: 1rem;
 		border: 1px solid #ddd;
 		border-radius: 4px;
-		font-size: 1rem;
 	}
 
 	.button-group {
@@ -298,16 +298,16 @@
 
 	button {
 		padding: 0.75rem 1.25rem;
-		border: none;
-		border-radius: 4px;
 		font-size: 1rem;
 		cursor: pointer;
+		border: none;
+		border-radius: 4px;
 		transition: background 0.2s ease;
 	}
 
 	.primary-button {
-		background: #007bff;
 		color: white;
+		background: #007bff;
 	}
 
 	.primary-button:hover {
@@ -315,8 +315,8 @@
 	}
 
 	.delete-button {
-		background: #dc3545;
 		color: white;
+		background: #dc3545;
 	}
 
 	.delete-button:hover {
@@ -324,8 +324,8 @@
 	}
 
 	.cancel-button {
-		background: #6c757d;
 		color: white;
+		background: #6c757d;
 	}
 
 	.cancel-button:hover {
@@ -333,17 +333,17 @@
 	}
 
 	.error-message {
-		background: #f8d7da;
-		color: #721c24;
 		padding: 0.75rem;
-		border-radius: 4px;
 		margin-bottom: 1rem;
+		color: #721c24;
+		background: #f8d7da;
+		border-radius: 4px;
 	}
 
 	.loading {
 		display: flex;
-		justify-content: center;
 		align-items: center;
+		justify-content: center;
 		min-height: 200px;
 		font-style: italic;
 		color: #6c757d;
