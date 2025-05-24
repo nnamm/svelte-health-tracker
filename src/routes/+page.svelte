@@ -131,7 +131,7 @@
 
 	.page-title {
 		font-size: 2rem;
-		font-weight: bold;
+		font-weight: 500;
 	}
 
 	.title-flash {

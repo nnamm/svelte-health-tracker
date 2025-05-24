@@ -14,6 +14,7 @@
 	 * />
 	 * ```
 	 */
+	import { goto } from '$app/navigation';
 	import Modal from '$lib/common/components/Modal.svelte';
 	import {
 		createHealthRecord,
@@ -103,6 +104,16 @@
 			console.error(err);
 		} finally {
 			isLoading = false;
+		}
+	}
+
+	/**
+	 * Move to the vizualization page
+	 **/
+	function navigateToVisualization(): void {
+		if (healthRecord?.date) {
+			closeModal();
+			goto(`/health/${healthRecord.date}`);
 		}
 	}
 
@@ -224,6 +235,14 @@
 				</div>
 
 				<div class="button-group">
+					{#if healthRecord?.id}
+						<button
+							type="button"
+							class="visualization-button"
+							onclick={() => navigateToVisualization()}>View</button
+						>
+					{/if}
+
 					<button type="submit" class="primary-button">
 						{healthRecord?.id ? 'Update' : 'Save'}
 					</button>
@@ -288,6 +307,27 @@
 		border: none;
 		border-radius: 4px;
 		transition: background 0.2s ease;
+	}
+
+	.visualization-button {
+		color: white;
+		background: #aa336a;
+	}
+
+	.visualization-button:hover {
+		background: #9f2560;
+	}
+
+	@media (width <= 480px) {
+		.button-group {
+			flex-wrap: wrap;
+			justify-content: center;
+		}
+
+		.button-group button {
+			flex: 1;
+			min-width: 80px;
+		}
 	}
 
 	.primary-button {

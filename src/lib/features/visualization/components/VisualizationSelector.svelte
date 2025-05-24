@@ -10,8 +10,6 @@
 </script>
 
 <div class="visualization-selector">
-	<h3>Select a visualization method</h3>
-
 	<div class="strategy-cards">
 		{#each strategies as strategy (strategy.key)}
 			<button
@@ -36,12 +34,7 @@
 
 <style>
 	.visualization-selector {
-		padding: 1rem;
-		margin: 2rem 1.5rem;
-	}
-
-	h3 {
-		font-weight: 400;
+		margin: 2rem;
 	}
 
 	.strategy-cards {
