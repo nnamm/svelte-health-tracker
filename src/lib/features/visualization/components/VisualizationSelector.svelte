@@ -36,8 +36,8 @@
 
 <style>
 	.visualization-selector {
-		margin: 2rem 1.5rem;
 		padding: 1rem;
+		margin: 2rem 1.5rem;
 	}
 
 	h3 {
@@ -55,32 +55,32 @@
 		display: flex;
 		flex-direction: column;
 		padding: 1rem;
-		border-radius: 8px;
-		border: 1px solid #e0e0e0;
-		background: white;
-		cursor: pointer;
-		transition: all 0.3s ease;
 		text-align: left;
+		cursor: pointer;
+		background: white;
+		border: 1px solid #e0e0e0;
+		border-radius: 8px;
+		transition: all 0.3s ease;
 	}
 
 	.strategy-card.selected {
 		border-color: #007bff;
-		box-shadow: 0 0 0 2px rgba(0, 123, 255, 0.2);
+		box-shadow: 0 0 0 2px rgb(0 123 255 / 20%);
 	}
 
 	.strategy-card:hover {
+		box-shadow: 0 6px 12px rgb(0 0 0 / 10%);
 		transform: translateY(-2px);
-		box-shadow: 0 6px 12px rgba(0, 0, 0, 0.1);
 	}
 
 	.thumbnail,
 	.placeholder-thumbnail {
 		width: 100%;
 		height: 120px;
-		border-radius: 4px;
 		margin-bottom: 0.5rem;
-		background: #f0f0f0;
 		object-fit: cover;
+		background: #f0f0f0;
+		border-radius: 4px;
 	}
 
 	.strategy-info h4 {

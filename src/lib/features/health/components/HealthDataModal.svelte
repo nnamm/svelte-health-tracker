@@ -21,30 +21,34 @@
 		updateHealthRecord,
 		deleteHealthRecord
 	} from '$lib/features/health/services/healthDataService';
+	import { DateUtils } from '$lib/utils/dateUtils';
 	import type { HealthRecord } from '$lib/types/HealthRecord';
 	import type { DailyHealthRecord } from '$lib/features/calendar/types';
 
 	/**
-	 * Component props
-	 * @property {boolean} isOpen - Whether the modal is currently visible
-	 * @property {string} date - The date string in 'YYYY-MM-DD' format
-	 * @property {DailyHealthRecord | null} dailyHealthRecord - Calendar day info with hasHealthData flag
-	 * @property {Function} [onClose] - Callback function when modal is closed
-	 * @property {Function} [onDataUpdated] - Callback function when health record is updated/created/deleted
+	 * Properties for the HealthDataModal component
+	 * @interface HealthDataModalProps
 	 */
+	interface HealthDataModalProps {
+		/** Whether the modal is currently visible */
+		isOpen: boolean;
+		/** The date string in 'YYYY-MM-DD' format */
+		date: string;
+		/** Calendar day info with hasHealthData flag */
+		dailyHealthRecord: DailyHealthRecord | null;
+		/** Callback function when modal is closed */
+		onClose?: () => void;
+		/** Callback function when health record is updated/created/deleted */
+		onDataUpdated?: (record: HealthRecord | null) => void;
+	}
+
 	let {
 		isOpen = false,
 		date = '',
 		dailyHealthRecord = null,
 		onClose,
 		onDataUpdated
-	} = $props<{
-		isOpen: boolean;
-		date: string;
-		dailyHealthRecord: DailyHealthRecord | null;
-		onClose?: () => void;
-		onDataUpdated?: (record: HealthRecord | null) => void;
-	}>();
+	}: HealthDataModalProps = $props();
 
 	// Safe version of dailyHealthRecord with default values if null
 	const safeHealthRecord = $derived(dailyHealthRecord || { date: date, hasHealthData: false });
@@ -65,22 +69,6 @@
 	let stepCountInput = $state<HTMLInputElement | null>(null);
 
 	/**
-	 * Formats a date string into a human-readable form
-	 * Converts YYYY-MM-DD to "Month Day, Year" format
-	 *
-	 * @param {string} dateString - Date in YYYY-MM-DD format
-	 * @returns {string} Formatted date string (e.g., "May 15, 2025")
-	 */
-	function formatDisplayDate(dateString: string): string {
-		const date = new Date(dateString);
-		return date.toLocaleDateString('en-US', {
-			year: 'numeric',
-			month: 'long',
-			day: 'numeric'
-		});
-	}
-
-	/**
 	 * Loads health data for the selected date
 	 * If data exists, it fetches from the API
 	 * If no data exists, it initializes with default values
@@ -93,7 +81,7 @@
 
 		isLoading = true;
 		error = null;
-		formattedDate = formatDisplayDate(date);
+		formattedDate = DateUtils.formatForDisplay(date);
 
 		try {
 			if (!safeHealthRecord.hasHealthData) {
@@ -261,8 +249,8 @@
 	}
 
 	h2 {
-		font-size: 1.5rem;
 		margin: 0;
+		font-size: 1.5rem;
 	}
 
 	.health-form {
@@ -282,9 +270,9 @@
 	input {
 		width: 100%;
 		padding: 0.75rem;
+		font-size: 1rem;
 		border: 1px solid #ddd;
 		border-radius: 4px;
-		font-size: 1rem;
 	}
 
 	.button-group {
@@ -295,16 +283,16 @@
 
 	button {
 		padding: 0.75rem 1.25rem;
-		border: none;
-		border-radius: 4px;
 		font-size: 1rem;
 		cursor: pointer;
+		border: none;
+		border-radius: 4px;
 		transition: background 0.2s ease;
 	}
 
 	.primary-button {
-		background: #007bff;
 		color: white;
+		background: #007bff;
 	}
 
 	.primary-button:hover {
@@ -312,8 +300,8 @@
 	}
 
 	.delete-button {
-		background: #dc3545;
 		color: white;
+		background: #dc3545;
 	}
 
 	.delete-button:hover {
@@ -321,8 +309,8 @@
 	}
 
 	.cancel-button {
-		background: #6c757d;
 		color: white;
+		background: #6c757d;
 	}
 
 	.cancel-button:hover {
@@ -330,17 +318,17 @@
 	}
 
 	.error-message {
-		background: #f8d7da;
-		color: #721c24;
 		padding: 0.75rem;
-		border-radius: 4px;
 		margin-bottom: 1rem;
+		color: #721c24;
+		background: #f8d7da;
+		border-radius: 4px;
 	}
 
 	.loading {
 		display: flex;
-		justify-content: center;
 		align-items: center;
+		justify-content: center;
 		min-height: 200px;
 		font-style: italic;
 		color: #6c757d;

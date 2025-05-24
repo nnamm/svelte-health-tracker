@@ -1,6 +1,6 @@
 import * as THREE from 'three';
 import type { VisualizationStrategy, VisualizationOptions, VisualizationInstance } from './types';
-import { detectPerformanceLevel, getMaxVertexCountForPerformance } from './helpers';
+import PerformanceOptimizer from '$lib/utils/performanceUtils';
 
 export const fractalStrategy: VisualizationStrategy = {
 	name: 'Fractal',
@@ -45,12 +45,11 @@ export const fractalStrategy: VisualizationStrategy = {
 
 		function generateFractalGeometory(steps: number) {
 			// Set complexity based on device perfomance
-			const performanceLevel = detectPerformanceLevel();
-			const maxVetrexCount = getMaxVertexCountForPerformance(performanceLevel);
+			const settings = PerformanceOptimizer.getOptimalSettings();
 
 			// Set polygon count limit using logarithmic scale
 			const complexity = Math.log10(Math.max(steps, 1)) * 300;
-			const vertexCount = Math.min(complexity, maxVetrexCount);
+			const vertexCount = Math.min(complexity, settings.maxVertices);
 
 			// Generate fractal geometry
 			const vertices: number[] = [];

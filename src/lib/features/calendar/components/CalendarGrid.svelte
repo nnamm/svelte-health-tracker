@@ -32,15 +32,26 @@
 	import { formatISO } from 'date-fns';
 
 	/**
-	 * Component props
-	 * @property {number} [year] - Current year to display (defaults to current year)
-	 * @property {number} [month] - Current month to display, 1-12 (defaults to current month)
-	 * @property {DayOfWeek} [startDayOfWeek] - First day of the week (0=Sunday, 1=Monday, etc.)
-	 * @property {DailyHealthRecord[]} [healthData] - Array of daily health records to display
-	 * @property {Function} [onDateSelect] - Callback when a date is selected
-	 * @property {Function} [onYearMonthChange] - Callback when year or month changes
-	 * @property {boolean} [resetSelector] - When true, resets the year/month selector to closed state
+	 * Properties for the CalendarGrid component
+	 * @interface CalendarGridProps
 	 */
+	interface CalendarGridProps {
+		/** Current year to display (defaults to current year) */
+		year?: number;
+		/** Current month to display, 1-12 (defaults to current month) */
+		month?: number;
+		/** First day of the week (0=Sunday, 1=Monday, etc.) */
+		startDayOfWeek?: DayOfWeek;
+		/** Array of daily health records to display */
+		healthData?: DailyHealthRecord[];
+		/** Callback when a date is selected */
+		onDateSelect?: (event: { date: string }) => void;
+		/** Callback when year or month changes */
+		onYearMonthChange?: (event: { year: number; month: number }) => void;
+		/** When true, resets the year/month selector to closed state */
+		resetSelector?: boolean;
+	}
+
 	let {
 		year = new Date().getFullYear(),
 		month = new Date().getMonth() + 1, // Corrects the return value of getMonth() to the calendar month(1-12)
@@ -49,15 +60,7 @@
 		onDateSelect,
 		onYearMonthChange,
 		resetSelector = false
-	} = $props<{
-		year?: number;
-		month?: number;
-		startDayOfWeek?: DayOfWeek;
-		healthData?: DailyHealthRecord[];
-		onDateSelect?: (event: { date: string }) => void;
-		onYearMonthChange?: (event: { year: number; month: number }) => void;
-		resetSelector?: boolean;
-	}>();
+	}: CalendarGridProps = $props();
 
 	// State for year/month selector UI toggle
 	let isYearMonthSelectorOpen = $state(false);
@@ -231,9 +234,10 @@
 		--tooltip-background-color: #007bff;
 		--tooltip-text-color: white;
 		--tooltip-border-radius: 4px;
-		--tooltip-box-shadow: 0 2px 8px rgba(0, 123, 255, 0.3);
-		font-weight: 500;
+		--tooltip-box-shadow: 0 2px 8px rgb(0 123 255 / 30%);
+
 		padding: 4px 8px;
+		font-weight: 500;
 	}
 
 	.calendar-container {
@@ -326,11 +330,11 @@
 		position: absolute;
 		bottom: 3px;
 		left: 50%;
-		transform: translateX(-50%);
 		width: 6px;
 		height: 6px;
-		border-radius: 50%;
 		background-color: #007bff;
+		border-radius: 50%;
+		transform: translateX(-50%);
 	}
 
 	i {

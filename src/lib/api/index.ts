@@ -4,6 +4,6 @@
  * @description Exports all API-related functions, constants, and types
  */
 
-export { apiClient, handleApiError, formatDate } from './client';
+export { apiClient, handleApiError } from './client';
 
 export type { ApiResponse } from './types';

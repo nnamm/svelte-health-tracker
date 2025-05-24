@@ -131,8 +131,8 @@
 <style>
 	.health-visualization-page {
 		width: 100%;
+		padding: 2rem 0;
 		margin: 0 auto;
-		padding: 2rem 0rem;
 	}
 
 	header {
@@ -152,20 +152,20 @@
 	}
 
 	.date {
-		color: #666;
-		font-size: 1.2rem;
 		margin: 0;
+		font-size: 1.2rem;
+		color: #666;
 	}
 
 	/* .library-loading, */
 	.loading-indicator,
 	.error-message,
 	.no-data-message {
-		text-align: center;
 		padding: 2rem;
+		margin-bottom: 2rem;
+		text-align: center;
 		background: #f9f9f9;
 		border-radius: 8px;
-		margin-bottom: 2rem;
 	}
 
 	.error-message {
@@ -182,9 +182,9 @@
 		width: 40px;
 		height: 40px;
 		margin: 0 auto 1rem;
-		border: 4px solid rgba(0, 123, 255, 0.2);
-		border-radius: 50%;
+		border: 4px solid rgb(0 123 255 / 20%);
 		border-top-color: #007bff;
+		border-radius: 50%;
 		animation: spin 1s ease-in-out infinite;
 	}
 
@@ -199,12 +199,12 @@
 		display: inline-block;
 		padding: 0.75rem 1.5rem;
 		margin-top: 1rem;
-		background: #007bff;
 		color: white;
 		text-decoration: none;
-		border-radius: 4px;
-		border: none;
 		cursor: pointer;
+		background: #007bff;
+		border: none;
+		border-radius: 4px;
 		transition: background 0.2s ease;
 	}
 
@@ -214,23 +214,13 @@
 	}
 
 	.visualization-section {
-		margin-bottom: 2rem;
 		position: relative;
+		margin-bottom: 2rem;
 	}
 
-	/* .library-loading { */
-	/* 	position: absolute; */
-	/* 	top: 50%; */
-	/* 	left: 50%; */
-	/* 	transform: translate(-50%, -50%); */
-	/* 	z-index: 10; */
-	/* 	background: rgba(255, 255, 255, 0.9); */
-	/* 	border: 1px solid #ddd; */
-	/* } */
-
 	.data-summary {
-		margin: 2rem;
 		padding: 1rem 1.5rem;
+		margin: 2rem;
 		background: #f5f5f5;
 		border-radius: 8px;
 	}
@@ -251,13 +241,13 @@
 	}
 
 	.value {
-		font-weight: 200;
 		font-size: 1.1rem;
+		font-weight: 200;
 	}
 
 	.step-count .value {
-		color: #007bff;
-		font-weight: 500;
 		font-size: 1.2rem;
+		font-weight: 500;
+		color: #007bff;
 	}
 </style>

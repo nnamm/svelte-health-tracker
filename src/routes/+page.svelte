@@ -108,25 +108,25 @@
 	.page-title-button {
 		display: block;
 		width: fit-content;
-		margin: 1.5rem auto;
 		padding: 0.5rem 1rem;
+		margin: 1.5rem auto;
+		font-family: inherit;
+		font-size: inherit;
+		font-weight: bold;
+		color: inherit;
 		cursor: pointer;
+		user-select: none;
+		background: none;
+		border: none;
+		border-radius: 4px;
 		transition:
 			color 0.2s ease,
 			background-color 0.2s ease;
-		user-select: none;
-		border-radius: 4px;
-		background: none;
-		border: none;
-		font-size: inherit;
-		font-weight: bold;
-		font-family: inherit;
-		color: inherit;
 	}
 
 	.page-title-button:hover {
 		color: #007bff;
-		background-color: rgba(0, 123, 255, 0.05);
+		background-color: rgb(0 123 255 / 5%);
 	}
 
 	.page-title {
@@ -141,15 +141,17 @@
 	@keyframes flash {
 		0% {
 			color: inherit;
-			background-color: rgba(0, 123, 255, 0);
+			background-color: rgb(0 123 255 / 0%);
 		}
+
 		50% {
 			color: #007bff;
-			background-color: rgba(0, 123, 255, 0.1);
+			background-color: rgb(0 123 255 / 10%);
 		}
+
 		100% {
 			color: inherit;
-			background-color: rgba(0, 123, 255, 0);
+			background-color: rgb(0 123 255 / 0%);
 		}
 	}
 </style>

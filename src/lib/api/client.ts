@@ -45,10 +45,3 @@ export const handleApiError = (error: unknown, message: string): ApiResponse<nev
 		error: message
 	};
 };
-
-/**
- * Formats date string by removing hyphens
- * @param {string} date - Date string in format YYYY-MM-DD
- * @returns {string} Date formatted as YYYYMMDD
- */
-export const formatDate = (date: string): string => date.replace(/-/g, '');
