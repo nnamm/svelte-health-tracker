@@ -21,6 +21,7 @@
 		updateHealthRecord,
 		deleteHealthRecord
 	} from '$lib/features/health/services/healthDataService';
+	import { DateUtils } from '$lib/utils/dateUtils';
 	import type { HealthRecord } from '$lib/types/HealthRecord';
 	import type { DailyHealthRecord } from '$lib/features/calendar/types';
 
@@ -68,22 +69,6 @@
 	let stepCountInput = $state<HTMLInputElement | null>(null);
 
 	/**
-	 * Formats a date string into a human-readable form
-	 * Converts YYYY-MM-DD to "Month Day, Year" format
-	 *
-	 * @param {string} dateString - Date in YYYY-MM-DD format
-	 * @returns {string} Formatted date string (e.g., "May 15, 2025")
-	 */
-	function formatDisplayDate(dateString: string): string {
-		const date = new Date(dateString);
-		return date.toLocaleDateString('en-US', {
-			year: 'numeric',
-			month: 'long',
-			day: 'numeric'
-		});
-	}
-
-	/**
 	 * Loads health data for the selected date
 	 * If data exists, it fetches from the API
 	 * If no data exists, it initializes with default values
@@ -96,7 +81,7 @@
 
 		isLoading = true;
 		error = null;
-		formattedDate = formatDisplayDate(date);
+		formattedDate = DateUtils.formatForDisplay(date);
 
 		try {
 			if (!safeHealthRecord.hasHealthData) {

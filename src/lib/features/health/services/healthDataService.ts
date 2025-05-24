@@ -4,7 +4,8 @@
  * @description Provides functions for CRUD operations on health records
  */
 
-import { apiClient, handleApiError, formatDate } from '$lib/api/client';
+import { apiClient, handleApiError } from '$lib/api/client';
+import { DateUtils } from '$lib/utils/dateUtils';
 import type { ApiResponse } from '$lib/api/types';
 import type { HealthRecord } from '$lib/types/HealthRecord';
 
@@ -68,7 +69,7 @@ export async function createHealthRecord(
  */
 export async function getHealthRecordByDate(date: string): Promise<ApiResponse<HealthRecord>> {
 	try {
-		const formattedDate = formatDate(date);
+		const formattedDate = DateUtils.formatForAPI(date);
 		const response = await apiClient.get(`${ENDPOINT}?date=${formattedDate}`);
 		if (response.data.records && response.data.records.length > 0) {
 			return {
@@ -205,7 +206,7 @@ export async function updateHealthRecord(
  */
 export async function deleteHealthRecord(date: string): Promise<ApiResponse<boolean>> {
 	try {
-		const formattedDate = formatDate(date);
+		const formattedDate = DateUtils.formatForAPI(date);
 		await apiClient.delete(`${ENDPOINT}?date=${formattedDate}`);
 		return {
 			success: true,
