@@ -1,5 +1,6 @@
 <script lang="ts">
 	import { onMount } from 'svelte';
+	import { goto } from '$app/navigation';
 	import { getHealthRecordByDate } from '$lib/features/health/services/healthDataService';
 	import Visualization from '$lib/features/visualization/components/Visualization.svelte';
 	import VisualizationSelector from '$lib/features/visualization/components/VisualizationSelector.svelte';
@@ -57,6 +58,10 @@
 		}
 	}
 
+	function navigateToHome(): void {
+		goto('/');
+	}
+
 	// Reload when date changes
 	$effect(() => {
 		if (date) {
@@ -77,10 +82,33 @@
 
 <div class="health-visualization-page">
 	<header>
-		<h1>Health Data Visualization</h1>
-		<p class="date">
-			{date ? DateUtils.formatForDisplay(date) : ''}
-		</p>
+		<div class="header-content">
+			<button
+				class="back-to-top-button"
+				onclick={() => navigateToHome()}
+				aria-label="Back to calendar"
+			>
+				<svg
+					width="24"
+					height="24"
+					viewBox="0 0 24 24"
+					fill="none"
+					stroke="currentColor"
+					stroke-width="2"
+					stroke-linecap="round"
+					stroke-linejoin="round"
+				>
+					<path d="m3 9 9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"></path>
+					<polyline points="9,22 9,12 15,12 15,22"></polyline>
+				</svg>
+			</button>
+			<div class="title-section">
+				<h1>Health Data Visualization</h1>
+				<p class="date">
+					{date ? DateUtils.formatForDisplay(date) : ''}
+				</p>
+			</div>
+		</div>
 	</header>
 
 	{#if isLoading}
@@ -132,6 +160,80 @@
 	header {
 		margin-bottom: 2rem;
 		text-align: center;
+	}
+
+	.header-content {
+		position: relative;
+		display: flex;
+		gap: 1rem;
+		align-items: center;
+		justify-content: center;
+	}
+
+	.back-to-top-button {
+		position: absolute;
+		top: 50%;
+		left: 0;
+		display: flex;
+		align-items: center;
+		justify-content: center;
+		width: 40px;
+		height: 40px;
+		color: #6c757d;
+		cursor: pointer;
+		background: #f8f9fa;
+		border: 1px solid #dee2e6;
+		border-radius: 8px;
+		transform: translate(50%, -90%);
+		transition: all 0.2s ease;
+	}
+
+	.back-to-top-button:hover {
+		color: #495057;
+		background: #e9ecef;
+		transform: translate(50%, -90%) scale(1.05);
+	}
+
+	.back-to-top-button:active {
+		transform: translate(50%, -90%) scale(0.95);
+	}
+
+	.title-section {
+		padding: 0 0.25rem;
+		text-align: center;
+	}
+
+	.title-section h1 {
+		margin-bottom: 0.75rem;
+	}
+
+	.title-section .date {
+		margin: 0;
+	}
+
+	@media (width <= 768px) {
+		.health-visualization-page {
+			padding: 3rem 0;
+		}
+
+		.header-content {
+			justify-content: center;
+		}
+
+		.back-to-top-button {
+			position: absolute;
+			top: 0;
+			left: 0;
+			transform: translate(20%, -110%);
+		}
+
+		.back-to-top-button:hover {
+			transform: scale(1.05);
+		}
+
+		.back-to-top-button:active {
+			transform: scale(0.95);
+		}
 	}
 
 	h1 {
