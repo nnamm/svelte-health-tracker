@@ -3,7 +3,7 @@ import type { VisualizationStrategy, VisualizationOptions, VisualizationInstance
 import PerformanceOptimizer from '$lib/utils/performanceUtils';
 
 export const fractalStrategy: VisualizationStrategy = {
-	name: 'Fractal',
+	name: 'SAMPLE: Fractal',
 	description: 'Fractal patterns with complexity that changes based on step count.',
 	// thumbnail: '';
 

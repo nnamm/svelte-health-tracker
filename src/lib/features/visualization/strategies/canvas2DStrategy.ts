@@ -1,8 +1,8 @@
 import type { VisualizationStrategy, VisualizationOptions, VisualizationInstance } from './types';
 
 export const canvas2DStrategy: VisualizationStrategy = {
-	name: 'Simple 2D Patterns',
-	description: 'Lightwight 2D patterns that respond to step count cahnges.',
+	name: 'SAMPLE: 2D Patterns',
+	description: 'Lightwight 2D patterns that respond to step count changes.',
 
 	create(container, stepCount, options: VisualizationOptions = {}): VisualizationInstance {
 		// Create canvas element
