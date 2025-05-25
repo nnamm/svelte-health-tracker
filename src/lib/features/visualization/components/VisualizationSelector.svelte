@@ -17,11 +17,11 @@
 				class:selected={getSelectedStrategyKey() === strategy.key}
 				onclick={() => selectStrategy(strategy.key)}
 			>
-				{#if strategy.thumbnail}
-					<img src={strategy.thumbnail} alt={strategy.name} class="thumbnail" />
-				{:else}
-					<div class="placeholder-thumbnail"></div>
-				{/if}
+				<!-- {#if strategy.thumbnail} -->
+				<!-- 	<img src={strategy.thumbnail} alt={strategy.name} class="thumbnail" /> -->
+				<!-- {:else} -->
+				<!-- 	<div class="placeholder-thumbnail"></div> -->
+				<!-- {/if} -->
 
 				<div class="strategy-info">
 					<h4>{strategy.name}</h4>
@@ -66,15 +66,15 @@
 		transform: translateY(-2px);
 	}
 
-	.thumbnail,
-	.placeholder-thumbnail {
-		width: 100%;
-		height: 120px;
-		margin-bottom: 0.5rem;
-		object-fit: cover;
-		background: #f0f0f0;
-		border-radius: 4px;
-	}
+	/* .thumbnail, */
+	/* .placeholder-thumbnail { */
+	/* 	width: 100%; */
+	/* 	height: 120px; */
+	/* 	margin-bottom: 0.5rem; */
+	/* 	object-fit: cover; */
+	/* 	background: #f0f0f0; */
+	/* 	border-radius: 4px; */
+	/* } */
 
 	.strategy-info h4 {
 		margin: 0 0 0.5rem;
