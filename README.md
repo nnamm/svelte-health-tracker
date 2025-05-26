@@ -44,7 +44,7 @@ This project implements a user-friendly frontend to interact with the Go and SQL
 
 ## Screenshots
 
-![TOP](./images/1_top.png)
+![TOP](./images/1_Top.png)
 
 ![Modal](./images/2_Modal.png)
 
