@@ -42,12 +42,21 @@ This project implements a user-friendly frontend to interact with the Go and SQL
    npm run build
    ```
 
+## Screenshots
+
+![TOP](./images/1_top.png)
+
+![Modal](./images/2_Modal.png)
+
+![Visualization](./images/3_Visualization.png)
+
 ## Key Features
 
 - **Calendar-Based Interface**: Interactive calendar for date selection
 - **Health Data Management**: Create, read, update, and delete step count records
 - **Visual Indicators**: Calendar highlights days with existing health data
 - **Year/Month Navigation**: Easily navigate between different months and years
+- **Data Visualization**: Multiple visualization strategies using p5.js and Three.js
 - **Responsive Design**: Works across desktop and tablet devices
 
 ## Tech Stack
@@ -57,6 +66,7 @@ This project implements a user-friendly frontend to interact with the Go and SQL
 - **State Management**: Svelte's built-in reactive primitives (`$state`, `$derived`, `$effect`)
 - **HTTP Client**: Axios for API communication
 - **Date Handling**: date-fns
+- **Visualization**: p5.js, Three.js for health data visualization
 - **Styling**: Component-scoped CSS
 - **Backend Communication**: REST API integration with go-health-tracker
 
@@ -70,13 +80,35 @@ This project implements a user-friendly frontend to interact with the Go and SQL
 - Basic UI/UX implementation
 - Component structure establishment
 
-### Phase 2: Enhanced Features and Visualization
+### Phase 2: Enhanced Features and Visualization (Completed)
 
-- Visualization of health data using p5.js or Paper.js
-- Mobile responsiveness enhancements
-- Additional health metrics beyond step count
-- Data trends and statistics display
-- Migration to Three.js for 3D visualizations
+- **Component Enhancements**
+  - HealthDataModal improvements with auto-focus functionality
+  - CalendarGrid enhancements with health data tooltips on hover
+- **Visualization System Implementation**
+  - Strategy and Factory pattern implementation for flexible visualization rendering
+  - Multiple visualization algorithms using p5.js and Three.js
+  - WebGL-based health data visualization with performance optimization
+  - User-selectable visualization methods for dynamic health data representation
+- **Quality Assurance**
+
+  - Unit testing implementation with integration test coverage
+  - Performance optimization for graphics rendering
+
+### Phase 3: Advanced Features and Production Readiness (Planned)
+
+- **User Experience Improvements**
+  - Mobile responsiveness enhancements for 320px minimum width
+  - Data trends and statistics display functionality
+  - Extended calendar view with 3-month data range display
+- **Backend Integration Enhancements**
+  - Support for user authentication and management
+  - Enhanced error handling and response consistency
+  - Integration with improved REST API endpoints
+- **Performance and Scalability**
+  - Advanced graphics performance optimization
+  - Progressive loading for large datasets
+  - Enhanced caching strategies for visualization components
 
 ## License
 
