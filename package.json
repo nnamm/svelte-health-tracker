@@ -24,6 +24,7 @@
 		"@sveltejs/vite-plugin-svelte": "^5.0.3",
 		"@testing-library/jest-dom": "^6.6.3",
 		"@testing-library/svelte": "^5.2.8",
+		"@testing-library/user-event": "^14.6.1",
 		"@types/eslint": "^9.6.1",
 		"@types/p5": "^1.7.6",
 		"@types/three": "^0.176.0",
