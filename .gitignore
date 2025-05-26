@@ -6,7 +6,6 @@ build
 # Dependency stuff
 node_modules
 .npmrc
-avante.md
 
 # Environments
 .env
@@ -20,6 +19,10 @@ coverage/
 # Vite
 vite.config.js.timestamp-*
 vite.config.ts.timestamp-*
+
+# Cursor etc
+.cursor
+avante.md
 
 # OS generated files
 .DS_Store
