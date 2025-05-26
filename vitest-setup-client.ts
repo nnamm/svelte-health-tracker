@@ -15,4 +15,13 @@ Object.defineProperty(window, 'matchMedia', {
 	}))
 });
 
+// Svelte 5のアニメーション関連のエラーを回避するためのスタブ
+if (typeof Element !== 'undefined' && !Element.prototype.animate) {
+	// @ts-expect-error - 型エラーを無視して最小限のモックを提供
+	Element.prototype.animate = () => ({
+		cancel: vi.fn(),
+		finished: Promise.resolve({})
+	});
+}
+
 // add more mocks here if you need them

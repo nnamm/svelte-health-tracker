@@ -1,12 +1,8 @@
-# AI Assistant Configuration
-
-## 使用モデルの優先順位
-
-1. claude-3.7-sonnet
-2. claude-3.7-sonnet-thinking
-3. gemini-2.5-pro-preview-05-06
-4. o3
-
+---
+description: 
+globs: 
+alwaysApply: true
+---
 ## Default Instructions
 
 - 本プロジェクトは学習目的の開発のため、できるだけ丁寧に解説してください

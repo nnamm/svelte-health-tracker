@@ -1,23 +1,26 @@
-node_modules
-
-# Output
-.output
-.vercel
-.netlify
-.wrangler
+# SveltKit
 /.svelte-kit
-/build
+dist
+build
 
-# OS
-.DS_Store
-Thumbs.db
+# Dependency stuff
+node_modules
+.npmrc
+avante.md
 
-# Env
+# Environments
 .env
 .env.production
 !.env.example
 !.env.test
 
+# Test
+coverage/
+
 # Vite
 vite.config.js.timestamp-*
 vite.config.ts.timestamp-*
+
+# OS generated files
+.DS_Store
+Thumbs.db
