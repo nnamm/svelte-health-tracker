@@ -1,0 +1,42 @@
+# Git
+.git
+.gitignore
+
+# Docker
+Dockerfile*
+.dockerignore
+
+# Development
+node_modules
+.env.development
+.npmrc
+.prettierignore
+.prettierrc
+.stylelintrc
+.svelte-kit
+eslint.config.js
+
+# Test
+coverage
+vitest-setup-client.ts
+**/*.test.ts
+**/*.integration.svelte.test.ts
+
+# Build
+build
+
+# Editor
+.cursor
+avante.md
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Others
+images
+*.log
+.cache
+.tmp
+LICENSE
+README.md
